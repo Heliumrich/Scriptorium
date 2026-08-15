@@ -1,43 +1,26 @@
-# Astro Starter Kit: Minimal
+# Scriptorium
+### Website for Catholics
+- Text comparator (with french translations not available on any comparator website)
+- Art gallery with presentation for each artist and people being depicted (Directus database is being populated, will be pushed later)
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Future additions :
+- Playlists by genre (Gregorian chants, Orthodox chants, classical music, ...)
+- EPUB library
+- Prayers memento
+- Liturgic year calender
+- List of resources
+- and many more
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### How to run
+- Get the database for the comparator [here](https://github.com/Heliumrich/FR-Bibles_JSON/releases/tag/DB/latest)
+  (there are scripts to add your own, but you will need to structure the translations into that JSON format. If you have an epub, get the files inside and ask an LLM to make a tailored script for it)
+- WIP: Install Directus and import the schema, then point to it from the .env file (rename .env.example to .env and modify it)
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### Stack used
+**Frontend:** Astro (content-first) with Svelte islands for interactive parts (Bible comparator)
+**Styling:** Tailwind CSS v4
+**CMS / media:** Directus + PostgreSQL (artists, artworks, image uploads & WebP transforms)
+**Bible data:** SQLite (read-only multi-translation verse database)
+**API:** Astro server endpoints (prerender = false) for verse lookup & navigation
+**Runtime / deploy:** Node (planned @astrojs/node adapter) on a small Linux VPS; Directus via Docker
+**Tooling:** Python scripts (BeautifulSoup) for EPUB/XHTML → JSON → SQLite import (tailored for each epub converted, not shared because it was made for each epub and is not reusable as each as a specific html structure that need to be parsed to handle verses and chapters correctly)
