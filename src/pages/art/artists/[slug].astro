@@ -1,0 +1,198 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { fetchFromDirectus, getAssetURL } from '../../../lib/directus';
+
+export async function getStaticPaths() {
+  const artists = await fetchFromDirectus('artists?filter[status][_eq]=published') || [];
+  
+  return artists.map((artist: any) => ({
+    params: { slug: artist.slug },
+    props: { artist }
+  }));
+}
+
+const { artist } = Astro.props;
+
+// Œuvres créées par l'artiste
+const createdWorks = await fetchFromDirectus(
+  `artworks?filter[status][_eq]=published&filter[artist][_eq]=${artist.id}&fields=id,slug,title_original,title_french,title_english,year,image&sort=-year`
+) || [];
+
+// Œuvres où l'artiste apparaît (depicted)
+const depictedWorks = await fetchFromDirectus(
+  `artworks?filter[status][_eq]=published&filter[depicted][artists_id][_eq]=${artist.id}&fields=id,slug,title_original,title_french,title_english,year,image&sort=-year`
+) || [];
+
+// Helper pour récupérer le meilleur titre disponible
+function getTitle(work: any) {
+  return work.title_french || work.title_original || work.title_english || 'Sans titre';
+}
+---
+
+<BaseLayout title={artist.name} description={artist.short_description}>
+  <main class="max-w-5xl mx-auto px-6 py-16">
+    <a href="/art/artists" class="text-sm text-neutral-500 hover:text-neutral-800">← Artistes</a>
+
+    <!-- En-tête artiste -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-[260px_1fr] gap-10 mb-16">
+      <div class="aspect-[3/4] bg-neutral-100 rounded-xl overflow-hidden">
+        {artist.photo ? (
+          <img
+            src={getAssetURL(artist.photo, 'thumbnail')}
+            alt={artist.name}
+            class="w-full h-full object-cover"
+          />
+        ) : (
+          <div class="w-full h-full flex items-center justify-center text-neutral-400">
+            Pas d'image
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h1 class="text-3xl font-bold mb-2">{artist.name}</h1>
+        
+        {artist.name_latin && (
+          <p class="text-neutral-500 italic mb-4">{artist.name_latin}</p>
+        )}
+
+        <div class="flex flex-wrap gap-2 mb-6">
+          {artist.type && (Array.isArray(artist.type) ? artist.type : [artist.type]).map((t: string) => (
+            <span class="badge px-2.5 py-1 bg-neutral-200 rounded-full capitalize text-sm">{t}</span>
+          ))}
+          
+          {(artist.birth_year || artist.death_year) && (
+            <span class="badge px-2.5 py-1 bg-neutral-100 rounded-full text-sm">
+              {artist.birth_year || '?'} – {artist.death_year || '?'}
+            </span>
+          )}
+        </div>
+
+        {artist.short_description && (
+          <p class="text-lg text-neutral-700 mb-6">{artist.short_description}</p>
+        )}
+
+        {artist.biography && (
+          <div class="prose prose-neutral max-w-none">
+            <Fragment set:html={artist.biography} />
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- ========== SECTION ŒUVRES ========== -->
+    {createdWorks.length > 0 && (
+      <section class="mb-12">
+        <button class="section-toggle flex items-center gap-2 mb-5 group cursor-pointer">
+          <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+          <h2 class="text-2xl font-semibold">
+            Œuvres <span class="text-neutral-400 text-lg font-normal">({createdWorks.length})</span>
+          </h2>
+        </button>
+
+        <div class="section-content">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {createdWorks.map((work: any, index: number) => (
+              <a
+                href={`/art/artworks/${work.slug}`}
+                class={`group block ${index >= 25 ? 'hidden extra-item' : ''}`}
+              >
+                <div class="aspect-square bg-neutral-100 rounded-lg overflow-hidden mb-3">
+                  {work.image ? (
+                    <img
+                      src={getAssetURL(work.image, 'thumbnail')}
+                      alt={getTitle(work)}
+                      class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-neutral-400 text-sm">—</div>
+                  )}
+                </div>
+                <h3 class="font-medium group-hover:underline line-clamp-2">{getTitle(work)}</h3>
+                {work.year && <p class="text-sm text-neutral-500">{work.year}</p>}
+              </a>
+            ))}
+          </div>
+
+          {createdWorks.length > 25 && (
+            <button class="show-more mt-6 text-sm text-neutral-600 hover:text-neutral-900 underline">
+              Afficher plus ({createdWorks.length - 25} restantes)
+            </button>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== SECTION APPARAÎT DANS ========== -->
+    {depictedWorks.length > 0 && (
+      <section class="mb-12">
+        <button class="section-toggle flex items-center gap-2 mb-5 group cursor-pointer">
+          <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+          <h2 class="text-2xl font-semibold">
+            Apparaît dans <span class="text-neutral-400 text-lg font-normal">({depictedWorks.length})</span>
+          </h2>
+        </button>
+
+        <div class="section-content">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {depictedWorks.map((work: any, index: number) => (
+              <a
+                href={`/art/artworks/${work.slug}`}
+                class={`group block ${index >= 25 ? 'hidden extra-item' : ''}`}
+              >
+                <div class="aspect-square bg-neutral-100 rounded-lg overflow-hidden mb-3">
+                  {work.image ? (
+                    <img
+                      src={getAssetURL(work.image, 'thumbnail')}
+                      alt={getTitle(work)}
+                      class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-neutral-400 text-sm">—</div>
+                  )}
+                </div>
+                <h3 class="font-medium group-hover:underline line-clamp-2">{getTitle(work)}</h3>
+                {work.year && <p class="text-sm text-neutral-500">{work.year}</p>}
+              </a>
+            ))}
+          </div>
+
+          {depictedWorks.length > 25 && (
+            <button class="show-more mt-6 text-sm text-neutral-600 hover:text-neutral-900 underline">
+              Afficher plus ({depictedWorks.length - 25} restantes)
+            </button>
+          )}
+        </div>
+      </section>
+    )}
+  </main>
+
+  <script>
+    document.querySelectorAll('.section-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const section = btn.closest('section');
+        const content = section?.querySelector('.section-content') as HTMLElement;
+        const icon = btn.querySelector('svg') as SVGElement;
+
+        if (!content || !icon) return;
+
+        const isHidden = content.classList.toggle('hidden');
+        icon.style.transform = isHidden ? 'rotate(-90deg)' : 'rotate(0deg)';
+      });
+    });
+
+    document.querySelectorAll('.show-more').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const grid = btn.previousElementSibling;
+        grid?.querySelectorAll('.extra-item').forEach(el => el.classList.remove('hidden'));
+        btn.remove();
+      });
+    });
+  </script>
+</BaseLayout>

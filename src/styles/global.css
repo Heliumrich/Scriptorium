@@ -1,0 +1,102 @@
+/* ========== POLICES ========== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;700&display=swap');
+
+/* TAILWIND */
+@import "tailwindcss";
+
+/* ========== THÈMES ========== */
+:root,
+[data-theme="light"] {
+  --bg: #fafafa;
+  --bg-secondary: #f4f4f5;
+  --text: #18181b;
+  --text-muted: #71717a;
+  --border: #e4e4e7;
+  --card: #ffffff;
+  --accent: #27272a;
+  --badge-bg: #e4e4e7;
+  --badge-text: #27272a;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Inter', system-ui, sans-serif;
+  --font-title: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-secondary: #18181b;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+  --border: #27272a;
+  --card: #18181b;
+  --accent: #e4e4e7;
+  --badge-bg: #27272a;
+  --badge-text: #e4e4e7;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Inter', system-ui, sans-serif;
+  --font-title: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="oled"] {
+  --bg: #000000;
+  --bg-secondary: #0a0a0a;
+  --text: #ffffff;
+  --text-muted: #a1a1aa;
+  --border: #1a1a1a;
+  --card: #0a0a0a;
+  --accent: #ffffff;
+  --badge-bg: #1a1a1a;
+  --badge-text: #e5e5e5;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Inter', system-ui, sans-serif;
+  --font-title: 'Inter', system-ui, sans-serif;
+}
+
+/* Bleu royal français (plus authentique) */
+[data-theme="royalty"] {
+  --bg: #002654;              /* Royal Blue que tu veux */
+  --bg-secondary: #2f4fb3;
+  --text: #f8f1e3;
+  --text-muted: #d4c4a8;
+  --border: #5a7de8;
+  --card: #2f4fb3;
+  --accent: #c9a227;
+  --badge-bg: #c9a227;
+  --badge-text: #1a1a2e;
+  --font-sans: 'EB Garamond', serif;
+  --font-serif: 'EB Garamond', serif;
+  --font-title: 'Playfair Display', serif;
+}
+
+/* Saint Augustin – parchemin + Empire romain */
+[data-theme="augustin"] {
+  --bg: #f2e6c9;              /* Parchemin */
+  --bg-secondary: #e8d7b0;
+  --text: #3b2a1a;
+  --text-muted: #6b4f35;
+  --border: #d4b98a;
+  --card: #f7ecd4;
+  --accent: #8b4513;
+  --badge-bg: #d4b98a;
+  --badge-text: #3b2a1a;
+  --font-sans: 'Cormorant Garamond', serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-title: 'Cinzel', serif;   /* Très romain */
+}
+
+/* ========== APPLICATION ========== */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, .font-title {
+  font-family: var(--font-title);
+}
+
+/* Badges / pills qui doivent s’adapter au thème */
+.badge {
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+}

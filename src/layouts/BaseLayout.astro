@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+
+  <body class="antialiased min-h-screen" data-theme="light">
+    <!-- Contrôles globaux -->
+    <header class="fixed top-4 right-4 z-50 flex items-center gap-3">
+      <!-- Switch Qualité max -->
+      <label class="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] bg-[var(--card)] cursor-pointer select-none hover:opacity-90 transition">
+        <input type="checkbox" id="quality-toggle" class="rounded" />
+        Qualité max
+      </label>
+
+      <!-- Sélecteur de thème -->
+      <div class="relative group">
+        <button class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] bg-[var(--card)] hover:opacity-90 transition">
+          Thème
+        </button>
+        <div class="absolute right-0 top-full mt-1 w-52 py-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+          <button data-theme-value="light" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Clair</button>
+          <button data-theme-value="dark" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Sombre</button>
+          <button data-theme-value="oled" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">OLED (noir pur)</button>
+          <button data-theme-value="royalty" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Royauté française</button>
+          <button data-theme-value="augustin" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Saint Augustin</button>
+        </div>
+      </div>
+    </header>
+
+    <slot />
+
+    <script>
+      // ===== Thème =====
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.setAttribute('data-theme', savedTheme);
+
+      document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const theme = btn.getAttribute('data-theme-value');
+          if (theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+          }
+        });
+      });
+
+      // ===== Qualité max =====
+      const qualityToggle = document.getElementById('quality-toggle') as HTMLInputElement;
+      const savedQuality = localStorage.getItem('quality-max') === 'true';
+      
+      if (qualityToggle) {
+        qualityToggle.checked = savedQuality;
+        
+        // Appliquer au chargement
+        if (savedQuality) {
+          document.documentElement.setAttribute('data-quality', 'max');
+        }
+
+        qualityToggle.addEventListener('change', () => {
+          const enabled = qualityToggle.checked;
+          localStorage.setItem('quality-max', String(enabled));
+          
+          if (enabled) {
+            document.documentElement.setAttribute('data-quality', 'max');
+          } else {
+            document.documentElement.removeAttribute('data-quality');
+          }
+
+          // Recharger les images de la page courante si on est sur une œuvre
+          window.dispatchEvent(new CustomEvent('quality-change', { detail: { max: enabled } }));
+        });
+      }
+    </script>
+  </body>
+</html>

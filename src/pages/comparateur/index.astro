@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comparator from '../../components/bible/Comparator.svelte';
+---
+
+<BaseLayout title="Comparateur de traductions">
+  <main class="max-w-[1600px] mx-auto px-4 py-10">
+    <div class="mb-8">
+      <a href="/" class="text-sm text-[var(--text-muted)] hover:underline">← Accueil</a>
+      <h1 class="text-3xl font-title font-bold mt-2">Comparateur de traductions</h1>
+    </div>
+
+    <Comparator client:load />
+  </main>
+</BaseLayout>

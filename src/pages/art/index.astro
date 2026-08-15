@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Galerie" description="Galerie d'art et inventaire des artistes">
+  <main class="max-w-5xl mx-auto px-6 py-16">
+    <h1 class="font-title text-3xl font-bold mb-8">Galerie</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <a href="/art/artists" class="block p-8 border border-neutral-200 rounded-xl hover:border-neutral-400 transition">
+        <h2 class="text-xl font-semibold mb-2">Artistes</h2>
+        <p class="text-neutral-600">Voir tous les artistes et saints</p>
+      </a>
+
+      <a href="/art/artworks" class="block p-8 border border-neutral-200 rounded-xl hover:border-neutral-400 transition">
+        <h2 class="text-xl font-semibold mb-2">Œuvres</h2>
+        <p class="text-neutral-600">Parcourir les œuvres d'art</p>
+      </a>
+    </div>
+  </main>
+</BaseLayout>
