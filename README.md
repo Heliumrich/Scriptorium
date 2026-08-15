@@ -17,10 +17,10 @@ Future additions :
 - WIP: Install Directus and import the schema, then point to it from the .env file (rename .env.example to .env and modify it)
 
 ### Stack used
-**Frontend:** Astro (content-first) with Svelte islands for interactive parts (Bible comparator)
-**Styling:** Tailwind CSS v4
-**CMS / media:** Directus + PostgreSQL (artists, artworks, image uploads & WebP transforms)
-**Bible data:** SQLite (read-only multi-translation verse database)
-**API:** Astro server endpoints (prerender = false) for verse lookup & navigation
-**Runtime / deploy:** Node (planned @astrojs/node adapter) on a small Linux VPS; Directus via Docker
-**Tooling:** Python scripts (BeautifulSoup) for EPUB/XHTML → JSON → SQLite import (tailored for each epub converted, not shared because it was made for each epub and is not reusable as each as a specific html structure that need to be parsed to handle verses and chapters correctly)
+- **Frontend:** Astro (content-first) with Svelte islands for interactive parts (Bible comparator)
+- **Styling:** Tailwind CSS v4
+- **CMS / media:** Directus + PostgreSQL (artists, artworks, image uploads & WebP transforms)
+- **Bible data:** SQLite (read-only multi-translation verse database)
+- **API:** Astro server endpoints (prerender = false) for verse lookup & navigation
+- **Runtime / deploy:** Node (planned @astrojs/node adapter) on a small Linux VPS; Directus via Docker
+- **Tooling:** Python scripts (BeautifulSoup) for EPUB/XHTML → JSON → SQLite import (tailored for each epub converted, not shared because it was made for each epub and is not reusable as each as a specific html structure that need to be parsed to handle verses and chapters correctly)
