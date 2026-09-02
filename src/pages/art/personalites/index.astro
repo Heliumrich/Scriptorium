@@ -3,15 +3,12 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import OrnamentRule from "../../../components/OrnamentRule.astro";
 import CatalogToolbar from "../../../components/CatalogToolbar.astro";
 import Thumb from "../../../components/Thumb.astro";
-import { fetchFromDirectus, getAssetURL, fileIdOf } from "../../../lib/directus";
+import { fetchArtistsList, getAssetURL, fileIdOf } from "../../../lib/directus";
 import { PAGE_SIZE, parseTags } from "../../../lib/catalog";
 
 export const prerender = true;
 
-const artists =
-  (await fetchFromDirectus<any[]>(
-    "artists?filter[status][_eq]=published&fields=id,slug,name,name_latin,short_description,photo,tags&sort=name&limit=-1",
-  )) || [];
+const artists = await fetchArtistsList();
 
 const allTags = [...new Set(artists.flatMap((a) => parseTags(a.tags)))].sort((a, b) =>
   a.localeCompare(b, "fr"),

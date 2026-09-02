@@ -28,7 +28,7 @@ type Artist = {
 
 const artists =
   (await fetchFromDirectus<Artist[]>(
-    "artists?filter[status][_eq]=published&fields=id,slug,name&limit=-1",
+    "artists?filter[status][_eq]=published&fields=id,slug,name&sort=name&limit=100",
   )) || [];
 
 const artworks =

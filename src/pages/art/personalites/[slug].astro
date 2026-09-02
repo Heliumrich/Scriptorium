@@ -4,6 +4,7 @@ import OrnamentRule from "../../../components/OrnamentRule.astro";
 import Thumb from "../../../components/Thumb.astro";
 import {
   fetchFromDirectus,
+  fetchAllFromDirectus,
   getAssetURL,
   getArtworkTitle,
   fileIdOf,
@@ -14,9 +15,9 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const list =
-    (await fetchFromDirectus<any[]>(
-      "artists?filter[status][_eq]=published&fields=slug&limit=-1",
-    )) || [];
+    await fetchAllFromDirectus<any>(
+      "artists?filter[status][_eq]=published&fields=slug&sort=name",
+    );
   return list
     .filter((a) => a?.slug)
     .map((a) => ({ params: { slug: String(a.slug) } }));
@@ -63,7 +64,7 @@ const tags = Array.isArray(artist.tags)
   description={artist.short_description || `Notice de ${artist.name}`}
 >
   <main class="mx-auto max-w-6xl px-4 py-10">
-    <a href="/art/personalites" class="text-sm text-muted hover:text-fg">← Artistes</a>
+    <a href="/art/personalites" class="text-sm text-muted hover:text-fg">← Personnalités illustres</a>
 
     <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-[260px_1fr]">
       <div class="aspect-[3/4] overflow-hidden rounded-xl bg-bg-secondary">
@@ -85,8 +86,10 @@ const tags = Array.isArray(artist.tags)
         <p class="text-xs uppercase tracking-[0.22em] text-muted">Artiste</p>
         <h1 class="mt-2 font-display text-4xl">{artist.name}</h1>
         {
-          artist.name_latin && (
-            <p class="mt-1 italic text-muted">{artist.name_latin}</p>
+          (artist.birth_year || artist.death_year) && (
+            <p class="mt-1 text-muted">
+              {[artist.birth_year, artist.death_year].filter(Boolean).join(" – ")}
+            </p>
           )
         }
 
