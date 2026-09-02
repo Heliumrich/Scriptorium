@@ -76,7 +76,15 @@ export function initCatalog(opts: Options) {
     const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
     if (page > pages) page = pages;
     const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-    grid.innerHTML = slice.map((item) => cardHtml(item, opts.kind)).join("");
+    const keepSsr =
+      grid.dataset.ssr === "1" &&
+      page === 1 &&
+      !search?.value.trim() &&
+      selectedTags().length === 0;
+    if (!keepSsr) {
+      grid.removeAttribute("data-ssr");
+      grid.innerHTML = slice.map((item) => cardHtml(item, opts.kind)).join("");
+    }
     hydrateThumbs(grid);
     if (opts.kind === "artwork") {
       setLightboxGallery(

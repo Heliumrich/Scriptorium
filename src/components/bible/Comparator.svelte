@@ -159,8 +159,9 @@
   <!-- Contrôles -->
   <div class="flex flex-wrap items-end gap-4">
     <div>
-      <label class="block text-xs text-[var(--text-muted)] mb-1">Référence</label>
+      <label for="cmp-ref" class="block text-xs text-[var(--text-muted)] mb-1">Référence</label>
       <input
+        id="cmp-ref"
         type="text"
         bind:value={ref}
         on:keydown={(e) => e.key === 'Enter' && load()}
@@ -170,8 +171,9 @@
     </div>
 
 	<div>
-	  <label class="block text-xs text-[var(--text-muted)] mb-1">Colonnes</label>
+	  <label for="cmp-cols" class="block text-xs text-[var(--text-muted)] mb-1">Colonnes</label>
 	  <select
+		id="cmp-cols"
 		value={numCols}
 		on:change={(e) => setNumCols(Number(e.currentTarget.value))}
 		class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)]"
@@ -185,8 +187,9 @@
 
 	{#each Array(numCols) as _, i}
 	  <div>
-		<label class="block text-xs text-[var(--text-muted)] mb-1">Traduction {i + 1}</label>
+		<label for={`cmp-tr-${i}`} class="block text-xs text-[var(--text-muted)] mb-1">Traduction {i + 1}</label>
 		<select
+		  id={`cmp-tr-${i}`}
 		  value={selectedIds[i]}
 		  on:change={(e) => setTranslation(i, Number(e.currentTarget.value))}
 		  class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)]"

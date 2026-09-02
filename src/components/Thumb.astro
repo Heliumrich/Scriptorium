@@ -1,13 +1,16 @@
 ---
+import { Image } from "astro:assets";
 import Fleur from "./Fleur.astro";
 
 interface Props {
   src: string | null;
   alt: string;
   eager?: boolean;
+  class?: string;
+  [key: string]: unknown;
 }
 
-const { src, alt, eager = false } = Astro.props;
+const { src, alt, eager = false, class: className, ...rest } = Astro.props;
 ---
 
 <div class="thumb-slot">
@@ -16,15 +19,16 @@ const { src, alt, eager = false } = Astro.props;
   </span>
   {
     src ? (
-      <img
+      <Image
         src={src}
         alt={alt}
-        class="thumb-img"
+        width={400}
+        height={400}
+        class:list={["thumb-img", className]}
         loading={eager ? "eager" : "lazy"}
         decoding="async"
         fetchpriority={eager ? "high" : "low"}
-        width="400"
-        height="400"
+        {...rest}
       />
     ) : (
       <span class="relative z-10 grid h-full place-items-center text-sm text-muted">Pas d’image</span>

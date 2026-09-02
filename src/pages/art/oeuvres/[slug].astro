@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import OrnamentRule from "../../../components/OrnamentRule.astro";
 import {
@@ -67,9 +68,11 @@ const tags = Array.isArray(work.tags)
       <div class="overflow-hidden rounded-xl bg-bg-secondary">
         {
           imageSrc ? (
-            <img
+            <Image
               src={imageSrc}
               alt={title}
+              width={2000}
+              height={2000}
               class="w-full cursor-zoom-in object-contain"
               loading="eager"
               data-lightbox

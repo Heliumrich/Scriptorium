@@ -30,7 +30,7 @@ const firstPage = artists.slice(0, PAGE_SIZE);
       Aucune personnalité ne correspond.
     </p>
 
-    <div id="catalog-grid" class="mt-8 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+    <div id="catalog-grid" class="mt-8 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4" data-ssr="1">
       {
         firstPage.map((artist) => {
           const src = getAssetURL(fileIdOf(artist.photo), "thumbnail");

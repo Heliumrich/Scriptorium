@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import OrnamentRule from "../../../components/OrnamentRule.astro";
 import Thumb from "../../../components/Thumb.astro";
@@ -70,9 +71,11 @@ const tags = Array.isArray(artist.tags)
       <div class="aspect-[3/4] overflow-hidden rounded-xl bg-bg-secondary">
         {
           photoSrc ? (
-            <img
+            <Image
               src={photoSrc}
               alt={artist.name}
+              width={800}
+              height={1067}
               class="h-full w-full object-cover"
               loading="eager"
             />
@@ -181,9 +184,11 @@ const tags = Array.isArray(artist.tags)
                 <a href={`/art/oeuvres/${work.slug}`} class="group">
                   <div class="aspect-square overflow-hidden rounded-lg bg-bg-secondary">
                     {src ? (
-                      <img
+                      <Image
                         src={src}
                         alt={getArtworkTitle(work)}
+                        width={400}
+                        height={400}
                         class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                       />
