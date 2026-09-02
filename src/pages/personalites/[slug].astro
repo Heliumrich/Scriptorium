@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Thumb from "../../components/Thumb.astro";
+import Fleur from "../../components/Fleur.astro";
 import {
   fetchFromDirectus,
   fetchAllFromDirectus,
@@ -63,7 +64,7 @@ const tags = Array.isArray(artist.tags)
     <a href="/personalites" class="text-sm text-muted hover:text-fg">← Personnalités illustres</a>
 
     <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-[260px_1fr]">
-      <div class="aspect-[3/4] overflow-hidden rounded-xl bg-bg-secondary">
+      <div class="aspect-[3/4] overflow-hidden rounded-xl">
         {
           photoSrc ? (
             <img
@@ -77,7 +78,12 @@ const tags = Array.isArray(artist.tags)
               decoding="async"
             />
           ) : (
-            <div class="grid h-full place-items-center text-muted">Pas d’image</div>
+            <div class="thumb-slot !aspect-[3/4]">
+              <span class="thumb-empty">
+                <Fleur class="size-10 opacity-40" />
+                <span>Pas d’image</span>
+              </span>
+            </div>
           )
         }
       </div>

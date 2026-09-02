@@ -333,12 +333,42 @@
 .thumb-slot.is-loaded .thumb-img {
   opacity: 1;
 }
-.thumb-img[data-lightbox] {
-  cursor: zoom-in;
-}
 .thumb-slot.is-loaded .thumb-ph {
   opacity: 0;
   pointer-events: none;
+}
+.thumb-empty {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+.thumb-zoom {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg) 38%, transparent);
+  color: color-mix(in oklab, var(--bg) 82%, white);
+  cursor: zoom-in;
+  opacity: 0.72;
+}
+.thumb-zoom:hover {
+  opacity: 1;
 }
 .group:hover .thumb-slot.is-loaded .thumb-img {
   transform: scale(1.05);

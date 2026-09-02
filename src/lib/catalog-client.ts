@@ -47,15 +47,22 @@ function cardHtml(item: CatalogItem, kind: "artwork" | "artist", eager = false) 
       ? [item.artist, item.year].filter(Boolean).join(" · ")
       : item.subtitle || "";
   const img = item.thumb
-    ? `<img src="${item.thumb}" alt="${escapeHtml(item.title)}" class="thumb-img" loading="${eager ? "eager" : "lazy"}" decoding="async" fetchpriority="${eager ? "high" : "low"}" width="400" height="400" ${kind === "artwork" ? lbAttrs(item) : ""} />`
-    : `<span class="relative z-10 grid h-full place-items-center text-sm text-muted">Pas d’image</span>`;
+    ? `<img src="${item.thumb}" alt="${escapeHtml(item.title)}" class="thumb-img" loading="${eager ? "eager" : "lazy"}" decoding="async" fetchpriority="${eager ? "high" : "low"}" width="400" height="400" />`
+    : `<span class="thumb-empty"><img src="/fleur-de-lys.svg" alt="" width="40" height="40" class="size-10 opacity-40" /><span>Pas d’image</span></span>`;
+  const zoom =
+    kind === "artwork" && item.thumb
+      ? `<button type="button" class="thumb-zoom" aria-label="Agrandir : ${escapeHtml(item.title)}" ${lbAttrs(item)}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5 21 21"></path></svg></button>`
+      : "";
   return `<article class="group">
+    <a href="${item.href}" class="block text-inherit no-underline">
     <div class="thumb-slot">
-      <span class="thumb-ph" aria-hidden="true"><img src="/fleur-de-lys.svg" alt="" width="40" height="40" class="size-10 opacity-40" /></span>
+      ${item.thumb ? `<span class="thumb-ph" aria-hidden="true"><img src="/fleur-de-lys.svg" alt="" width="40" height="40" class="size-10 opacity-40" /></span>` : ""}
       ${img}
+      ${zoom}
     </div>
-    <h2 class="mt-3 font-display text-lg"><a href="${item.href}" class="group-hover:underline">${escapeHtml(item.title)}</a></h2>
+    <h2 class="mt-3 font-display text-lg group-hover:underline">${escapeHtml(item.title)}</h2>
     ${meta ? `<p class="text-sm text-muted line-clamp-2">${escapeHtml(String(meta))}</p>` : ""}
+    </a>
   </article>`;
 }
 

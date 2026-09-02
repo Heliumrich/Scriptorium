@@ -56,6 +56,7 @@ const firstPage = artworks.slice(0, PAGE_SIZE);
                 alt={title}
                 loading={i < 8 ? "eager" : "lazy"}
                 fetchpriority={i < 8 ? "high" : "low"}
+                zoom={Boolean(src)}
                 data-lightbox
                 data-alt={title}
                 data-href={`/oeuvres/${work.slug}`}

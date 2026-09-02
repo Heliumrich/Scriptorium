@@ -97,7 +97,20 @@ const hasError = artists.length === 0 && artworks.length === 0;
               const src = getAssetURL(id, "thumbnail");
               return (
                 <a href={`/oeuvres/${work.slug}`} class="group">
-                  <Thumb src={src} alt={getArtworkTitle(work)} loading={i < 3 ? "eager" : "lazy"} fetchpriority={i < 3 ? "high" : "low"} />
+                  <Thumb
+                    src={src}
+                    alt={getArtworkTitle(work)}
+                    loading={i < 3 ? "eager" : "lazy"}
+                    fetchpriority={i < 3 ? "high" : "low"}
+                    zoom={Boolean(src)}
+                    data-lightbox
+                    data-alt={getArtworkTitle(work)}
+                    data-href={`/oeuvres/${work.slug}`}
+                    data-medium={getAssetURL(id, "medium") || ""}
+                    data-large={getAssetURL(id, "large") || ""}
+                    data-xlarge={getAssetURL(id, "xlarge") || ""}
+                    data-original={getAssetURL(id) || ""}
+                  />
                   <h3 class="mt-3 font-display text-lg group-hover:underline">
                     {getArtworkTitle(work)}
                   </h3>
