@@ -93,12 +93,12 @@ const hasError = artists.length === 0 && artworks.length === 0;
           <h2 class="font-display text-3xl">Derniers ajouts</h2>
           <OrnamentRule class="my-5 max-w-xs" />
           <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
-            {latest.map((work) => {
+            {latest.map((work, i) => {
               const id = fileIdOf(work.image);
               const src = getAssetURL(id, "thumbnail");
               return (
                 <a href={`/art/oeuvres/${work.slug}`} class="group">
-                  <Thumb src={src} alt={getArtworkTitle(work)} />
+                  <Thumb src={src} alt={getArtworkTitle(work)} loading={i < 3 ? "eager" : "lazy"} fetchpriority={i < 3 ? "high" : "low"} />
                   <h3 class="mt-3 font-display text-lg group-hover:underline">
                     {getArtworkTitle(work)}
                   </h3>

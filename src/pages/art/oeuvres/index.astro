@@ -43,7 +43,7 @@ const firstPage = artworks.slice(0, PAGE_SIZE);
 
     <div id="catalog-grid" class="catalog-grid mt-8" data-ssr="1">
       {
-        firstPage.map((work) => {
+        firstPage.map((work, i) => {
           const id = fileIdOf(work.image);
           const src = getAssetURL(id, "thumbnail");
           const title = getArtworkTitle(work);
@@ -54,6 +54,8 @@ const firstPage = artworks.slice(0, PAGE_SIZE);
               <Thumb
                 src={src}
                 alt={title}
+                loading={i < 8 ? "eager" : "lazy"}
+                fetchpriority={i < 8 ? "high" : "low"}
                 data-lightbox
                 data-alt={title}
                 data-href={`/art/oeuvres/${work.slug}`}

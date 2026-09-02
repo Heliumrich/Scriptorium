@@ -11,10 +11,6 @@ export default defineConfig({
   // endpoints /api/bible/* (prerender = false) utilisés par le comparateur.
   output: 'static',
   adapter: node({ mode: 'standalone' }),
-  image: {
-    domains: ["api.literae.ch"],
-    remotePatterns: [{ protocol: "https", hostname: "api.literae.ch" }],
-  },
   vite: {
     plugins: [tailwindcss()],
 	server: {

@@ -48,6 +48,22 @@ const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
       </div>
       <Footer />
     </div>
+    <script is:inline>
+      (function () {
+        var imgs = document.querySelectorAll("img.thumb-img");
+        var vh = window.innerHeight || 0;
+        for (var i = 0; i < imgs.length; i++) {
+          var img = imgs[i];
+          var top = img.getBoundingClientRect().top;
+          if (top < vh + 40) {
+            img.setAttribute("loading", "eager");
+            img.setAttribute("fetchpriority", "high");
+            img.loading = "eager";
+            img.fetchPriority = "high";
+          }
+        }
+      })();
+    </script>
     <script>
       import { hydrateThumbs } from "../lib/thumbs";
       import { initLightbox } from "../lib/lightbox";

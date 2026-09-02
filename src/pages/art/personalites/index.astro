@@ -32,11 +32,11 @@ const firstPage = artists.slice(0, PAGE_SIZE);
 
     <div id="catalog-grid" class="mt-8 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4" data-ssr="1">
       {
-        firstPage.map((artist) => {
+        firstPage.map((artist, i) => {
           const src = getAssetURL(fileIdOf(artist.photo), "thumbnail");
           return (
             <a href={`/art/personalites/${artist.slug}`} class="group">
-              <Thumb src={src} alt={artist.name} />
+              <Thumb src={src} alt={artist.name} loading={i < 8 ? "eager" : "lazy"} fetchpriority={i < 8 ? "high" : "low"} />
               <h2 class="mt-3 font-display text-lg group-hover:underline">{artist.name}</h2>
               {artist.short_description && (
                 <p class="mt-1 line-clamp-2 text-sm text-muted">{artist.short_description}</p>

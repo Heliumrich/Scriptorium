@@ -1,16 +1,23 @@
 ---
-import { Image } from "astro:assets";
 import Fleur from "./Fleur.astro";
 
 interface Props {
   src: string | null;
   alt: string;
-  eager?: boolean;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
   class?: string;
   [key: string]: unknown;
 }
 
-const { src, alt, eager = false, class: className, ...rest } = Astro.props;
+const {
+  src,
+  alt,
+  loading = "lazy",
+  fetchpriority = "low",
+  class: className,
+  ...rest
+} = Astro.props;
 ---
 
 <div class="thumb-slot">
@@ -19,16 +26,16 @@ const { src, alt, eager = false, class: className, ...rest } = Astro.props;
   </span>
   {
     src ? (
-      <Image
+      <img
+        {...rest}
         src={src}
         alt={alt}
         width={400}
         height={400}
         class:list={["thumb-img", className]}
-        loading={eager ? "eager" : "lazy"}
         decoding="async"
-        fetchpriority={eager ? "high" : "low"}
-        {...rest}
+        loading={loading}
+        fetchpriority={fetchpriority}
       />
     ) : (
       <span class="relative z-10 grid h-full place-items-center text-sm text-muted">Pas d’image</span>

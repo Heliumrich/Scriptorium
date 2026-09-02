@@ -40,13 +40,13 @@ function lbAttrs(item: CatalogItem) {
   return `data-lightbox data-alt="${escapeHtml(item.title)}" data-href="${escapeHtml(item.href)}" data-medium="${item.medium || ""}" data-large="${item.large || ""}" data-xlarge="${item.xlarge || ""}" data-original="${item.original || ""}"`;
 }
 
-function cardHtml(item: CatalogItem, kind: "artwork" | "artist") {
+function cardHtml(item: CatalogItem, kind: "artwork" | "artist", eager = false) {
   const meta =
     kind === "artwork"
       ? [item.artist, item.year].filter(Boolean).join(" · ")
       : item.subtitle || "";
   const img = item.thumb
-    ? `<img src="${item.thumb}" alt="${escapeHtml(item.title)}" class="thumb-img" loading="lazy" decoding="async" fetchpriority="low" width="400" height="400" ${kind === "artwork" ? lbAttrs(item) : ""} />`
+    ? `<img src="${item.thumb}" alt="${escapeHtml(item.title)}" class="thumb-img" loading="${eager ? "eager" : "lazy"}" decoding="async" fetchpriority="${eager ? "high" : "low"}" width="400" height="400" ${kind === "artwork" ? lbAttrs(item) : ""} />`
     : `<span class="relative z-10 grid h-full place-items-center text-sm text-muted">Pas d’image</span>`;
   return `<article class="group">
     <div class="thumb-slot">
@@ -83,7 +83,7 @@ export function initCatalog(opts: Options) {
       selectedTags().length === 0;
     if (!keepSsr) {
       grid.removeAttribute("data-ssr");
-      grid.innerHTML = slice.map((item) => cardHtml(item, opts.kind)).join("");
+      grid.innerHTML = slice.map((item, i) => cardHtml(item, opts.kind, i < 8)).join("");
     }
     hydrateThumbs(grid);
     if (opts.kind === "artwork") {
