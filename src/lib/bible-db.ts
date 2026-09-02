@@ -6,6 +6,7 @@ function resolveDbPath() {
   const candidates = [
     process.env.BIBLE_DB,
     path.resolve(process.cwd(), "data/bible.db"),
+    path.resolve(process.cwd(), "bible.db"),
     "/var/www/scriptorium/data/bible.db",
   ].filter(Boolean) as string[];
 
@@ -20,8 +21,7 @@ function resolveDbPath() {
 
 export function getBibleDb() {
   const dbPath = resolveDbPath();
-  return new Database(`file:${dbPath}?mode=ro&immutable=1`, {
-    readonly: true,
-    fileMustExist: true,
-  });
+  const db = new Database(dbPath, { readonly: true, fileMustExist: true });
+  db.pragma("query_only = ON");
+  return db;
 }
