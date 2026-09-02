@@ -1,0 +1,68 @@
+---
+interface Props {
+  tags: string[];
+  searchPlaceholder?: string;
+  showView?: boolean;
+}
+const { tags, searchPlaceholder = "Rechercher…", showView = false } = Astro.props;
+---
+
+<div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+  {
+    showView && (
+      <div class="flex h-11 shrink-0 rounded-lg border border-border bg-card p-1">
+        <button type="button" data-view="grid" class="view-btn rounded-md px-3 text-sm bg-bg-secondary font-medium">Grille</button>
+        <button type="button" data-view="list" class="view-btn rounded-md px-3 text-sm text-muted">Liste</button>
+      </div>
+    )
+  }
+
+  <label class="relative min-w-0 flex-1">
+    <span class="sr-only">Recherche</span>
+    <input
+      id="catalog-search"
+      type="search"
+      placeholder={searchPlaceholder}
+      autocomplete="off"
+      class="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none ring-accent/30 focus:ring-2"
+    />
+  </label>
+
+  {
+    tags.length > 0 && (
+      <div class="relative shrink-0" id="tag-dropdown">
+        <button
+          type="button"
+          id="tag-toggle"
+          class="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm hover:bg-bg-secondary"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Étiquettes
+          <span id="tag-count" class="hidden rounded-full bg-badge px-2 py-0.5 text-xs text-badge-fg">0</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div
+          id="tag-panel"
+          class="absolute right-0 z-30 mt-2 hidden w-[min(36rem,calc(100vw-2rem))] rounded-xl border border-border bg-card p-4 shadow-lg"
+        >
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex rounded-md border border-border p-0.5 text-xs">
+              <button type="button" data-mode="and" class="mode-btn rounded px-2.5 py-1 bg-bg-secondary font-medium">ET</button>
+              <button type="button" data-mode="or" class="mode-btn rounded px-2.5 py-1 text-muted">OU</button>
+            </div>
+            <button type="button" id="tag-clear" class="text-xs text-muted hover:text-fg">Effacer</button>
+          </div>
+          <div class="grid max-h-72 grid-cols-2 gap-1 overflow-y-auto sm:grid-cols-3">
+            {tags.map((tag) => (
+              <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-bg-secondary">
+                <input type="checkbox" class="tag-filter size-3.5 accent-gold" value={tag} />
+                <span class="truncate">{tag}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+</div>

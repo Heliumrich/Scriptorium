@@ -1,0 +1,33 @@
+---
+import Fleur from "./Fleur.astro";
+
+interface Props {
+  src: string | null;
+  alt: string;
+  eager?: boolean;
+}
+
+const { src, alt, eager = false } = Astro.props;
+---
+
+<div class="thumb-slot">
+  <span class="thumb-ph" aria-hidden="true">
+    <Fleur class="size-10 opacity-40" />
+  </span>
+  {
+    src ? (
+      <img
+        src={src}
+        alt={alt}
+        class="thumb-img"
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        fetchpriority={eager ? "high" : "low"}
+        width="400"
+        height="400"
+      />
+    ) : (
+      <span class="relative z-10 grid h-full place-items-center text-sm text-muted">Pas d’image</span>
+    )
+  }
+</div>

@@ -1,102 +1,427 @@
-/* ========== POLICES ========== */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;700&display=swap');
-
-/* TAILWIND */
 @import "tailwindcss";
 
-/* ========== THÈMES ========== */
+@theme {
+  --color-bg: var(--bg);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-badge: var(--badge-bg);
+  --color-badge-fg: var(--badge-text);
+  --color-gold: var(--gold);
+  --color-ink: var(--ink);
+  --font-sans: var(--type-ui);
+  --font-serif: var(--type-body);
+  --font-display: var(--type-display);
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+}
+
 :root,
 [data-theme="light"] {
-  --bg: #fafafa;
-  --bg-secondary: #f4f4f5;
-  --text: #18181b;
-  --text-muted: #71717a;
-  --border: #e4e4e7;
-  --card: #ffffff;
-  --accent: #27272a;
-  --badge-bg: #e4e4e7;
-  --badge-text: #27272a;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-serif: 'Inter', system-ui, sans-serif;
-  --font-title: 'Inter', system-ui, sans-serif;
+  --bg: #f4efe4;
+  --bg-secondary: #ebe4d4;
+  --text: #1c1914;
+  --text-muted: #5c564c;
+  --text-subtle: #7a7368;
+  --border: color-mix(in oklab, #1c1914 12%, transparent);
+  --card: #fbf7ee;
+  --accent: #3a3328;
+  --accent-fg: #fbf7ee;
+  --badge-bg: #e8dfcc;
+  --badge-text: #4a4338;
+  --gold: #8a7344;
+  --ink: #1c1914;
+  --type-ui: "Source Sans 3", system-ui, sans-serif;
+  --type-body: "Source Serif 4", "EB Garamond", Georgia, serif;
+  --type-display: "Cinzel", "Times New Roman", serif;
+  --shadow-border: 0 0 0 1px rgba(28, 25, 20, 0.08), 0 1px 2px -1px rgba(28, 25, 20, 0.06),
+    0 8px 24px -12px rgba(28, 25, 20, 0.12);
+  --hero-wash: color-mix(in oklab, var(--bg-secondary) 70%, transparent);
 }
 
 [data-theme="dark"] {
-  --bg: #09090b;
-  --bg-secondary: #18181b;
-  --text: #fafafa;
-  --text-muted: #a1a1aa;
-  --border: #27272a;
-  --card: #18181b;
-  --accent: #e4e4e7;
-  --badge-bg: #27272a;
-  --badge-text: #e4e4e7;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-serif: 'Inter', system-ui, sans-serif;
-  --font-title: 'Inter', system-ui, sans-serif;
+  --bg: #12110f;
+  --bg-secondary: #1b1a17;
+  --text: #efe8d8;
+  --text-muted: #b4ab99;
+  --text-subtle: #8a8273;
+  --border: color-mix(in oklab, #efe8d8 14%, transparent);
+  --card: #1b1a17;
+  --accent: #e7dcc4;
+  --accent-fg: #16140f;
+  --badge-bg: #e7dcc4;
+  --badge-text: #16140f;
+  --gold: #c4b089;
+  --ink: #efe8d8;
+  --type-ui: "Source Sans 3", system-ui, sans-serif;
+  --type-body: "Source Serif 4", "EB Garamond", Georgia, serif;
+  --type-display: "Cinzel", "Times New Roman", serif;
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --hero-wash: color-mix(in oklab, #000 35%, transparent);
 }
 
 [data-theme="oled"] {
   --bg: #000000;
   --bg-secondary: #0a0a0a;
-  --text: #ffffff;
-  --text-muted: #a1a1aa;
-  --border: #1a1a1a;
+  --text: #f5f0e6;
+  --text-muted: #a8a29a;
+  --text-subtle: #73706a;
+  --border: color-mix(in oklab, #f5f0e6 12%, transparent);
   --card: #0a0a0a;
-  --accent: #ffffff;
-  --badge-bg: #1a1a1a;
-  --badge-text: #e5e5e5;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-serif: 'Inter', system-ui, sans-serif;
-  --font-title: 'Inter', system-ui, sans-serif;
+  --accent: #f5f0e6;
+  --accent-fg: #000000;
+  --badge-bg: #f5f0e6;
+  --badge-text: #000000;
+  --gold: #c9b896;
+  --ink: #f5f0e6;
+  --type-ui: "Source Sans 3", system-ui, sans-serif;
+  --type-body: "Source Serif 4", Georgia, serif;
+  --type-display: "Cinzel", "Times New Roman", serif;
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --hero-wash: transparent;
 }
 
-/* Bleu royal français (plus authentique) */
 [data-theme="royalty"] {
-  --bg: #002654;              /* Royal Blue que tu veux */
-  --bg-secondary: #2f4fb3;
+  --bg: #002654;
+  --bg-secondary: #163a78;
   --text: #f8f1e3;
   --text-muted: #d4c4a8;
-  --border: #5a7de8;
-  --card: #2f4fb3;
+  --text-subtle: #b7a88c;
+  --border: color-mix(in oklab, #f8f1e3 18%, transparent);
+  --card: #0b2f63;
   --accent: #c9a227;
+  --accent-fg: #1a1a2e;
   --badge-bg: #c9a227;
   --badge-text: #1a1a2e;
-  --font-sans: 'EB Garamond', serif;
-  --font-serif: 'EB Garamond', serif;
-  --font-title: 'Playfair Display', serif;
+  --gold: #c9a227;
+  --ink: #f8f1e3;
+  --type-ui: "EB Garamond", "Times New Roman", serif;
+  --type-body: "EB Garamond", "Times New Roman", serif;
+  --type-display: "Cinzel", "Times New Roman", serif;
+  --shadow-border: 0 0 0 1px rgba(201, 162, 39, 0.28), 0 12px 32px -16px rgba(0, 0, 0, 0.45);
+  --hero-wash: color-mix(in oklab, #001a3d 55%, transparent);
 }
 
-/* Saint Augustin – parchemin + Empire romain */
 [data-theme="augustin"] {
-  --bg: #f2e6c9;              /* Parchemin */
-  --bg-secondary: #e8d7b0;
+  --bg: #ead9b4;
+  --bg-secondary: #e2d0a8;
   --text: #3b2a1a;
   --text-muted: #6b4f35;
-  --border: #d4b98a;
-  --card: #f7ecd4;
+  --text-subtle: #8a6a48;
+  --border: color-mix(in oklab, #3b2a1a 18%, transparent);
+  --card: #f3e6c6;
   --accent: #8b4513;
-  --badge-bg: #d4b98a;
-  --badge-text: #3b2a1a;
-  --font-sans: 'Cormorant Garamond', serif;
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-title: 'Cinzel', serif;   /* Très romain */
+  --accent-fg: #f7ecd4;
+  --badge-bg: #e6d5ae;
+  --badge-text: #5a3d22;
+  --gold: #8b4513;
+  --ink: #3b2a1a;
+  --type-ui: "Cormorant Garamond", "Palatino Linotype", serif;
+  --type-body: "Cormorant Garamond", "Palatino Linotype", serif;
+  --type-display: "Cinzel", "Times New Roman", serif;
+  --shadow-border: 0 0 0 1px rgba(59, 42, 26, 0.12), 0 10px 28px -16px rgba(59, 42, 26, 0.28);
+  --hero-wash: color-mix(in oklab, #cbb07a 40%, transparent);
 }
 
-/* ========== APPLICATION ========== */
-body {
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--type-body);
+    font-size: 1rem;
+    line-height: 1.55;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--type-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  main h1 {
+    font-size: clamp(2.65rem, 4.6vw, 3.45rem);
+    line-height: 1.12;
+  }
+  main h1 + p {
+    font-size: 1.35rem;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 35%, transparent);
+    color: var(--text);
+  }
+}
+
+/* ——— Royauté : fleurs de lys partout ——— */
+[data-theme="royalty"] body {
+  background-color: #002654;
+  background-image:
+    url("/fleur-tile.svg"),
+    radial-gradient(1200px 600px at 50% -10%, #163a78 0%, transparent 60%);
+  background-size: 140px 175px, auto;
+  background-repeat: repeat, no-repeat;
+}
+
+[data-theme="royalty"] .site-header,
+[data-theme="royalty"] .site-footer {
+  background-color: var(--card);
+  background-image: none;
+}
+
+[data-theme="royalty"] .panel {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--card) 72%, transparent), color-mix(in oklab, var(--card) 72%, transparent)),
+    url("/fleur-tile.svg");
+  background-size: auto, 96px 120px;
+}
+
+[data-theme="royalty"] .fleur-watermark {
+  opacity: 0.1;
+}
+
+/* ——— Saint Augustin : fond uni, plus sombre que header/footer ——— */
+[data-theme="augustin"] body {
   background-color: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  transition: background-color 0.25s ease, color 0.25s ease;
+  background-image: none;
+  font-size: 1.16rem;
+  font-weight: 500;
+  line-height: 1.65;
 }
 
-h1, h2, h3, h4, .font-title {
-  font-family: var(--font-title);
+[data-theme="augustin"] [data-col] {
+  font-size: 1.28rem;
 }
 
-/* Badges / pills qui doivent s’adapter au thème */
-.badge {
-  background-color: var(--badge-bg);
+[data-theme="augustin"] main h1 {
+  font-size: clamp(2.25rem, 4vw, 3rem);
+}
+
+[data-theme="augustin"] main h1 + p {
+  font-size: 1.25rem;
+}
+
+[data-theme="augustin"] .site-header,
+[data-theme="augustin"] .site-footer,
+[data-theme="augustin"] .panel {
+  background-color: var(--card);
+  background-image: none;
+}
+
+[data-theme="light"] body {
+  background-image: radial-gradient(900px 420px at 50% -8%, #fffaf0 0%, transparent 70%);
+}
+
+.panel {
+  background-color: var(--card);
+  box-shadow: var(--shadow-border);
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  background: var(--badge-bg);
   color: var(--badge-text);
+  border: 1px solid color-mix(in oklab, var(--badge-text) 32%, transparent);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.tag-pill:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.prayer-desc {
+  width: 100%;
+  max-width: none;
+  text-align: justify;
+  hyphens: auto;
+}
+.prayer-desc p {
+  margin: 0 0 0.55em;
+  text-align: justify;
+}
+.prayer-desc p:last-child {
+  margin-bottom: 0;
+}
+
+.ornament-rule {
+  height: 22px;
+  background-color: var(--gold);
+  background-image: none;
+  -webkit-mask-image: url("/ichthys.svg");
+  mask-image: url("/ichthys.svg");
+  -webkit-mask-repeat: space no-repeat;
+  mask-repeat: space no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: auto 18px;
+  mask-size: auto 18px;
+}
+
+.verse.highlight {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+}
+
+.thumb-slot {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--bg-secondary);
+}
+.thumb-ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-subtle);
+  transition: opacity 0.35s ease;
+}
+.thumb-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    transform 0.3s ease;
+}
+.thumb-slot.is-loaded .thumb-img {
+  opacity: 1;
+}
+.thumb-img[data-lightbox] {
+  cursor: zoom-in;
+}
+.thumb-slot.is-loaded .thumb-ph {
+  opacity: 0;
+  pointer-events: none;
+}
+.group:hover .thumb-slot.is-loaded .thumb-img {
+  transform: scale(1.05);
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .catalog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 8, 6, 0.88);
+  padding: 1.5rem;
+}
+.lightbox[hidden] {
+  display: none;
+}
+.lightbox-img {
+  max-width: min(96vw, 1600px);
+  max-height: 88vh;
+  object-fit: contain;
+}
+.lightbox-cap {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f8f1e3;
+  font-size: 0.9rem;
+}
+.lightbox-cap-link {
+  color: inherit;
+}
+.lightbox-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  color: #f8f1e3;
+  font-size: 2rem;
+  line-height: 1;
+}
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #f8f1e3;
+  font-size: 3rem;
+  line-height: 1;
+  padding: 0.5rem 0.8rem;
+  text-shadow: 0 1px 8px rgba(0,0,0,.6);
+}
+.lightbox-prev { left: 0.4rem; }
+.lightbox-next { right: 0.4rem; }
+.lightbox-prev.hidden,
+.lightbox-next.hidden { display: none; }
+
+.drop-cap::first-letter {
+  font-family: var(--type-display);
+  float: left;
+  font-size: 3.4rem;
+  line-height: 0.8;
+  padding-right: 0.12em;
+  padding-top: 0.08em;
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

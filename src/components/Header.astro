@@ -1,0 +1,183 @@
+---
+import Fleur from "./Fleur.astro";
+
+const pathname = Astro.url.pathname;
+
+const NAV = [
+  { href: "/", label: "Accueil" },
+  { href: "/comparateur", label: "Comparateur" },
+  { href: "/art", label: "Art" },
+  { href: "/prieres", label: "Prières" },
+  { href: "/calendrier", label: "Calendrier" },
+  { href: "/a-propos", label: "À propos" },
+];
+
+function isActive(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
+}
+---
+
+<header class="site-header sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-md">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+    <a href="/" class="flex items-center gap-2.5 text-fg no-underline">
+      <Fleur class="size-8 text-gold" title="Scriptorium" />
+      <span class="font-display text-xl tracking-tight">Scriptorium</span>
+    </a>
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
+      {
+        NAV.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "rounded-md px-3 py-2 text-sm transition-colors hover:bg-bg-secondary hover:text-fg",
+              isActive(item.href) ? "bg-bg-secondary text-fg" : "text-muted",
+            ]}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <label class="hidden items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs text-muted sm:flex cursor-pointer select-none">
+        <input type="checkbox" id="quality-toggle" class="size-3.5 accent-gold" />
+        Qualité max
+      </label>
+
+      <div class="relative" id="theme-menu-wrap">
+        <button
+          type="button"
+          id="theme-toggle-btn"
+          class="rounded-md border border-border bg-card px-3 py-2 text-xs text-muted hover:text-fg transition-colors"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+        >
+          Thème
+        </button>
+        <div
+          id="theme-dropdown"
+          class="absolute right-0 top-full mt-1 hidden w-52 rounded-lg border border-border bg-card py-1 shadow-lg z-50"
+          role="listbox"
+        >
+          <button type="button" data-theme-value="light" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-bg-secondary">Clair</button>
+          <button type="button" data-theme-value="dark" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-bg-secondary">Sombre</button>
+          <button type="button" data-theme-value="oled" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-bg-secondary">Noir pur</button>
+          <button type="button" data-theme-value="royalty" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-bg-secondary">Royauté française</button>
+          <button type="button" data-theme-value="augustin" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-bg-secondary">Saint Augustin</button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        id="mobile-nav-btn"
+        class="rounded-md border border-border bg-card p-2 text-muted lg:hidden"
+        aria-label="Menu"
+        aria-expanded="false"
+      >
+        <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    class="hidden border-t border-border bg-card lg:hidden"
+    aria-label="Navigation mobile"
+  >
+    <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3">
+      {
+        NAV.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "rounded-md px-3 py-2.5 text-sm",
+              isActive(item.href) ? "bg-bg-secondary text-fg" : "text-muted",
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <label class="mt-2 flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs text-muted sm:hidden cursor-pointer">
+        <input type="checkbox" id="quality-toggle-mobile" class="size-3.5 accent-gold" />
+        Qualité max
+      </label>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const THEME_KEY = "scriptorium-theme";
+  const QUALITY_KEY = "quality-max";
+
+  function applyTheme(theme: string) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  function applyQuality(max: boolean) {
+    if (max) document.documentElement.setAttribute("data-quality", "max");
+    else document.documentElement.removeAttribute("data-quality");
+    localStorage.setItem(QUALITY_KEY, max ? "true" : "false");
+    window.dispatchEvent(new CustomEvent("quality-change", { detail: { max } }));
+  }
+
+  const savedTheme = localStorage.getItem(THEME_KEY) || "augustin";
+  applyTheme(savedTheme);
+
+  const savedQuality = localStorage.getItem(QUALITY_KEY) === "true";
+  const qualityDesktop = document.getElementById("quality-toggle") as HTMLInputElement | null;
+  const qualityMobile = document.getElementById("quality-toggle-mobile") as HTMLInputElement | null;
+  if (qualityDesktop) qualityDesktop.checked = savedQuality;
+  if (qualityMobile) qualityMobile.checked = savedQuality;
+  applyQuality(savedQuality);
+
+  qualityDesktop?.addEventListener("change", () => {
+    const v = qualityDesktop.checked;
+    if (qualityMobile) qualityMobile.checked = v;
+    applyQuality(v);
+  });
+  qualityMobile?.addEventListener("change", () => {
+    const v = qualityMobile.checked;
+    if (qualityDesktop) qualityDesktop.checked = v;
+    applyQuality(v);
+  });
+
+  const themeBtn = document.getElementById("theme-toggle-btn");
+  const themeDropdown = document.getElementById("theme-dropdown");
+  themeBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = !themeDropdown?.classList.contains("hidden");
+    themeDropdown?.classList.toggle("hidden", open);
+    themeBtn.setAttribute("aria-expanded", String(!open));
+  });
+  document.querySelectorAll(".theme-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = (btn as HTMLElement).dataset.themeValue;
+      if (value) applyTheme(value);
+      themeDropdown?.classList.add("hidden");
+      themeBtn?.setAttribute("aria-expanded", "false");
+    });
+  });
+  document.addEventListener("click", () => {
+    themeDropdown?.classList.add("hidden");
+    themeBtn?.setAttribute("aria-expanded", "false");
+  });
+
+  const mobileBtn = document.getElementById("mobile-nav-btn");
+  const mobileNav = document.getElementById("mobile-nav");
+  const iconMenu = document.getElementById("icon-menu");
+  const iconClose = document.getElementById("icon-close");
+  mobileBtn?.addEventListener("click", () => {
+    const open = !mobileNav?.classList.contains("hidden");
+    mobileNav?.classList.toggle("hidden", open);
+    iconMenu?.classList.toggle("hidden", !open);
+    iconClose?.classList.toggle("hidden", open);
+    mobileBtn.setAttribute("aria-expanded", String(!open));
+  });
+</script>

@@ -1,0 +1,265 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import OrnamentRule from "../../../components/OrnamentRule.astro";
+import {
+  fetchFromDirectus,
+  getAssetURL,
+  getArtworkTitle,
+  fileIdOf,
+  looksLikeHtml,
+} from "../../../lib/directus";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const list =
+    (await fetchFromDirectus<any[]>(
+      "artworks?filter[status][_eq]=published&fields=slug&limit=-1",
+    )) || [];
+  return list
+    .filter((w) => w?.slug)
+    .map((w) => ({ params: { slug: String(w.slug) } }));
+}
+
+const { slug } = Astro.params;
+
+const works =
+  (await fetchFromDirectus<any[]>(
+    `artworks?filter[status][_eq]=published&filter[slug][_eq]=${encodeURIComponent(slug!)}&fields=*,artist.id,artist.slug,artist.name,depicted.artists_id.id,depicted.artists_id.slug,depicted.artists_id.name&limit=1`,
+  )) || [];
+
+const work = works[0];
+
+if (!work) {
+  return Astro.redirect("/art/oeuvres");
+}
+
+const title = getArtworkTitle(work);
+const imageId = fileIdOf(work.image);
+const imageMedium = getAssetURL(imageId, "medium");
+const imageSrc = getAssetURL(imageId, "large");
+const imageXlarge = getAssetURL(imageId, "xlarge");
+const imageOriginal = getAssetURL(imageId);
+
+const locationLines = (work.location || "")
+  .split(",")
+  .map((s: string) => s.trim())
+  .filter(Boolean);
+
+const depicted = Array.isArray(work.depicted)
+  ? work.depicted
+      .map((d: any) => d.artists_id || d)
+      .filter((a: any) => a && (a.slug || a.name))
+  : [];
+
+const tags = Array.isArray(work.tags)
+  ? work.tags
+  : typeof work.tags === "string"
+    ? work.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
+    : [];
+---
+
+<BaseLayout title={title} description={work.description?.slice?.(0, 160) || title}>
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <a href="/art/oeuvres" class="text-sm text-muted hover:text-fg">← Œuvres</a>
+
+    <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="overflow-hidden rounded-xl bg-bg-secondary">
+        {
+          imageSrc ? (
+            <img
+              src={imageSrc}
+              alt={title}
+              class="w-full cursor-zoom-in object-contain"
+              loading="eager"
+              data-lightbox
+              data-alt={title}
+              data-href={`/art/oeuvres/${slug}`}
+              data-medium={imageMedium || ""}
+              data-large={imageSrc}
+              data-xlarge={imageXlarge || ""}
+              data-original={imageOriginal || ""}
+              data-quality-src={imageOriginal || undefined}
+            />
+          ) : (
+            <div class="grid aspect-[4/5] place-items-center text-muted">
+              Pas d’image
+            </div>
+          )
+        }
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.22em] text-muted">Œuvre</p>
+        <h1 class="mt-2 font-display text-3xl sm:text-4xl">{title}</h1>
+        {
+          work.title_original && work.title_original !== title && (
+            <p class="mt-1 italic text-muted">{work.title_original}</p>
+          )
+        }
+
+        <dl class="mt-6 space-y-3 text-sm">
+          {
+            work.artist && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Artiste</dt>
+                <dd>
+                  {work.artist.slug ? (
+                    <a
+                      href={`/art/personalites/${work.artist.slug}`}
+                      class="hover:underline"
+                    >
+                      {work.artist.name}
+                    </a>
+                  ) : (
+                    work.artist.name
+                  )}
+                </dd>
+              </div>
+            )
+          }
+          {
+            work.year && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Année</dt>
+                <dd>{work.year}</dd>
+              </div>
+            )
+          }
+          {
+            work.technique && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Technique</dt>
+                <dd>{work.technique}</dd>
+              </div>
+            )
+          }
+          {
+            work.dimensions && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Dimensions</dt>
+                <dd>{work.dimensions}</dd>
+              </div>
+            )
+          }
+          {
+            locationLines.length > 0 && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Localisation</dt>
+                <dd class="space-y-0.5">
+                  {locationLines.map((line: string, i: number) => (
+                    <div>
+                      {line}
+                      {i < locationLines.length - 1 ? "," : ""}
+                    </div>
+                  ))}
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+
+        {
+          depicted.length > 0 && (
+            <div class="mt-6">
+              <p class="text-xs uppercase tracking-[0.18em] text-muted">
+                Personnes représentées
+              </p>
+              <ul class="mt-2 flex flex-wrap gap-2">
+                {depicted.map((person: any) => (
+                  <li>
+                    <a
+                      href={
+                        person.slug
+                          ? `/art/personalites/${person.slug}`
+                          : "/art/personalites"
+                      }
+                      class="tag-pill"
+                    >
+                      {person.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          tags.length > 0 && (
+            <div class="mt-6">
+              <p class="text-xs uppercase tracking-[0.18em] text-muted">Étiquettes</p>
+              <ul class="mt-2 flex flex-wrap gap-2">
+                {tags.map((t: string) => (
+                  <li>
+                    <a
+                      href={`/art/oeuvres?tags=${encodeURIComponent(t)}`}
+                      class="tag-pill"
+                    >
+                      {t}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      work.description && (
+        <section class="mt-14">
+          <h2 class="font-display text-2xl">Notice</h2>
+          <OrnamentRule class="my-4 max-w-xs" />
+          {looksLikeHtml(work.description) ? (
+            <div
+              class="prose max-w-3xl text-justify"
+              set:html={work.description}
+            />
+          ) : (
+            <p class="max-w-3xl whitespace-pre-line text-justify leading-relaxed">
+              {work.description}
+            </p>
+          )}
+        </section>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<script>
+  import { setLightboxGallery } from "../../../lib/lightbox";
+
+  fetch("/art/oeuvres.json")
+    .then((r) => r.json())
+    .then((data) => {
+      setLightboxGallery(
+        (data.items || []).map((item: { title: string; medium?: string; large?: string; xlarge?: string; original?: string }) => ({
+          alt: item.title,
+          medium: item.medium,
+          large: item.large,
+          xlarge: item.xlarge,
+          original: item.original,
+        })),
+      );
+    })
+    .catch(() => {});
+
+  // Qualité max : bascule vers l'original si demandé
+  function syncQuality() {
+    const max = document.documentElement.getAttribute("data-quality") === "max";
+    document.querySelectorAll<HTMLImageElement>("[data-quality-src]").forEach((img) => {
+      const original = img.dataset.qualitySrc;
+      if (!original) return;
+      if (max && img.src !== original) {
+        img.dataset.previewSrc = img.src;
+        img.src = original;
+      } else if (!max && img.dataset.previewSrc) {
+        img.src = img.dataset.previewSrc;
+      }
+    });
+  }
+  window.addEventListener("quality-change", syncQuality);
+  syncQuality();
+</script>

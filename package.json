@@ -1,7 +1,7 @@
 {
   "name": "scriptorium",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -9,22 +9,23 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "start": "node dist/server/entry.mjs",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/svelte": "^9.0.1",
-    "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.2.2",
-    "svelte": "^5.56.9",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "@astrojs/node": "11.1.4",
+    "@astrojs/svelte": "9.0.1",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.2.9",
+    "better-sqlite3": "13.0.3",
+    "svelte": "5.57.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^9.6.0",
-    "better-sqlite3": "^13.0.3"
+    "@types/better-sqlite3": "9.6.0"
   },
   "allowScripts": {
-    "better-sqlite3@13.0.3": true,
-    "esbuild@0.28.2": true
+    "better-sqlite3@13.0.3": true
   }
 }

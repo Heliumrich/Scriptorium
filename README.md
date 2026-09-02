@@ -1,26 +1,66 @@
 # Scriptorium
-### Website for Catholics
-- Text comparator (with french translations not available on any comparator website)
-- Art gallery with presentation for each artist and people being depicted (Directus database is being populated, will be pushed later)
 
-Future additions :
-- Playlists by genre (Gregorian chants, Orthodox chants, classical music, ...)
-- EPUB library
-- Prayers memento
-- Liturgic year calender
-- List of resources
-- and many more
+Atelier catholique francophone. Comparer des traductions de la Bible trop peu présentes ailleurs, feuilleter une galerie d’art sacré, prier, suivre l’année liturgique.
 
-### How to run
-- Get the database for the comparator [here](https://github.com/Heliumrich/FR-Bibles_JSON/releases/tag/DB/latest)
-  (there are scripts to add your own, but you will need to structure the translations into that JSON format. If you have an epub, get the files inside and ask an LLM to make a tailored script for it)
-- WIP: Install Directus and import the schema, then point to it from the .env file (rename .env.example to .env and modify it)
+*Tolle, lege — prends et lis.*
 
-### Stack used
-- **Frontend:** Astro (content-first) with Svelte islands for interactive parts (Bible comparator)
-- **Styling:** Tailwind CSS v4
-- **CMS / media:** Directus + PostgreSQL (artists, artworks, image uploads & WebP transforms)
-- **Bible data:** SQLite (read-only multi-translation verse database)
-- **API:** Astro server endpoints (prerender = false) for verse lookup & navigation
-- **Runtime / deploy:** Node (planned @astrojs/node adapter) on a small Linux VPS; Directus via Docker
-- **Tooling:** Python scripts (BeautifulSoup) for EPUB/XHTML → JSON → SQLite import (tailored for each epub converted, not shared because it was made for each epub and is not reusable as each as a specific html structure that need to be parsed to handle verses and chapters correctly)
+## Fonctions
+
+- **Comparateur de traductions** — Crampon, Fillion, Sacy, Segond, Ostervald, Vulgate, etc. Colonnes côte à côte, survol synchronisé des versets, navigation livre / chapitre (îlot Svelte).
+- **Galerie** — artistes, saints et œuvres depuis Directus (`https://api.literae.ch`). Notices, personnes représentées, images (clés Directus `thumbnail` / `medium` / `large` / `xlarge`), filtres d’étiquettes (ET / OU) via paramètres GET.
+- **Prières** — placeholder (mémento local à venir).
+- **Calendrier liturgique** — couleur du jour, temps, solennités (calcul local).
+- **Thèmes** — Clair, Sombre, OLED, **Royauté française** (lys sur bleu de France), **Saint Augustin** (parchemin grainé, Cinzel). Thème par défaut : Saint Augustin.
+
+## Stack
+
+| Couche | Choix |
+|---|---|
+| Frontend | Astro 7 (content-first) + Svelte 5 islands (comparateur) |
+| Style | Tailwind CSS v4, tokens CSS (`data-theme`), typographie Google Fonts |
+| CMS / images | Directus public `https://api.literae.ch` — collections `artists`, `artworks` |
+| Bible | SQLite lecture seule (`data/bible.db`, schéma [FR-Bibles_JSON](https://github.com/Heliumrich/FR-Bibles_JSON)) |
+| API | Astro server endpoints (`prerender = false`) pour versets & navigation |
+
+## UI / layout
+
+- Header sticky : logo lys + Scriptorium, nav, **Qualité max**, sélecteur de thème, menu mobile
+- Footer : lys, phrase d’atelier, liens
+- Rythme de page : label uppercase tracking large → titre `font-display` → `OrnamentRule` → texte serif
+- Cartes `.panel`, grilles max-width `6xl` (comparateur `1600px`)
+- Accueil : verset du jour, temps liturgique, pupitres ; lys en filigrane dès `lg`
+
+## Lancer
+
+```bash
+# Placez data/bible.db (release DB/latest de FR-Bibles_JSON)
+cp .env.example .env   # optionnel — DIRECTUS_URL
+npm install
+npm run dev
+```
+
+Build : `npm run build`.
+
+## Directus
+
+Par défaut : `https://api.literae.ch` (surcharge via `DIRECTUS_URL`).
+
+- `artists` — `slug`, `name`, `name_latin`, `photo`, `type`, `birth_year`, `death_year`, `short_description`, `biography`, `tags`, `status=published`
+- `artworks` — `slug`, titres, `year`, `image`, `artist`, `depicted`, `technique`, `dimensions`, `location`, `description`, `tags`, `date_created`, `status=published`
+
+Assets : `/assets/{id}?key=thumbnail|medium|large|xlarge`. **Qualité max** sert le fichier original.
+
+## Routes
+
+| Chemin | Page |
+|---|---|
+| `/` | Accueil |
+| `/comparateur` | Comparateur |
+| `/art` | Hub galerie + derniers ajouts |
+| `/art/personalites` | Liste artistes (`?tags=` `&mode=or` `&view=list`) |
+| `/art/personalites/[slug]` | Fiche artiste |
+| `/art/oeuvres` | Liste œuvres |
+| `/art/oeuvres/[slug]` | Fiche œuvre |
+| `/prieres` | Placeholder |
+| `/calendrier` | Jour liturgique |
+| `/a-propos` | Colophon |

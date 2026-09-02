@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { formatRefLabel } from '../../lib/bible-ref';
 
   type Translation = { id: number; code: string; name_short: string };
   type Verse = { verse: number; text: string };
@@ -13,7 +14,7 @@
   let loading = false;
   let error = '';
   let columns: Column[] = [];
-  let current = { book: '', chapter: 0, verse: null as number | null };
+  let current = { book: '', chapter: 0, verse: null as number | null, verseEnd: null as number | null };
   let nav = { prev: null as any, next: null as any };
   let ready = false; // ← empêche les appels trop tôt
 
@@ -92,6 +93,7 @@
         chapter: String(parsed.chapter)
       });
       if (parsed.verse) params.set('verse', String(parsed.verse));
+      if (parsed.verseEnd) params.set('verseEnd', String(parsed.verseEnd));
       selectedIds.forEach(id => params.append('t', String(id)));
 
       const res = await fetch(`/api/bible/verses?${params}`);
@@ -101,14 +103,15 @@
       current = {
         book: data.book,
         chapter: data.chapter,
-        verse: data.verse || null
+        verse: data.verse || null,
+        verseEnd: data.verseEnd || parsed.verseEnd || null,
       };
 
       const navParams = new URLSearchParams({
         book: current.book,
         chapter: String(current.chapter)
       });
-      if (current.verse) navParams.set('verse', String(current.verse));
+      if (current.verse && !current.verseEnd) navParams.set('verse', String(current.verse));
       const navRes = await fetch(`/api/bible/navigation?${navParams}`);
       nav = await navRes.json();
 
@@ -162,8 +165,8 @@
         type="text"
         bind:value={ref}
         on:keydown={(e) => e.key === 'Enter' && load()}
-        class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] w-48"
-        placeholder="Jean 3:16"
+        class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] w-56"
+        placeholder="Ps 34:1-4"
       />
     </div>
 
@@ -207,21 +210,31 @@
     >
       Comparer
     </button>
+
+    <div class="ml-auto flex h-9 w-9 shrink-0 items-center justify-center" aria-live="polite">
+      <span class="cmp-spinner" class:cmp-spinner-on={loading} aria-hidden={!loading}></span>
+      <span class="sr-only">{loading ? 'Chargement' : ''}</span>
+    </div>
   </div>
 
   <!-- Navigation -->
-  <div class="flex gap-3">
+  <div class="flex items-center justify-between gap-3">
     <button
       on:click={() => navigate('prev')}
       disabled={!nav.prev}
-      class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] disabled:opacity-40"
+      class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] disabled:opacity-40 shrink-0"
     >
       ← Précédent
     </button>
+    {#if current.book}
+      <h2 class="min-w-0 flex-1 text-center font-display text-xl sm:text-2xl">
+        {formatRefLabel(current)}
+      </h2>
+    {/if}
     <button
       on:click={() => navigate('next')}
       disabled={!nav.next}
-      class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] disabled:opacity-40"
+      class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] disabled:opacity-40 shrink-0"
     >
       Suivant →
     </button>
@@ -229,10 +242,6 @@
 
   {#if error}
     <p class="text-red-500">{error}</p>
-  {/if}
-
-  {#if loading}
-    <p class="text-[var(--text-muted)]">Chargement…</p>
   {/if}
 
   <!-- Résultats -->
@@ -272,5 +281,24 @@
   }
   .verse.highlight {
     background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .cmp-spinner {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    border: 2px solid color-mix(in oklab, var(--text) 22%, transparent);
+    border-top-color: var(--gold);
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+  }
+  .cmp-spinner-on {
+    opacity: 1;
+    transform: scale(1);
+    animation: cmp-spin 0.7s linear infinite;
+  }
+  @keyframes cmp-spin {
+    to { transform: rotate(360deg); }
   }
 </style>

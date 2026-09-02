@@ -1,0 +1,24 @@
+---
+import Fleur from "./Fleur.astro";
+---
+
+<footer class="site-footer mt-auto border-t border-border">
+  <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-start gap-3">
+      <Fleur class="mt-0.5 size-7 shrink-0 text-gold" />
+      <div>
+        <p class="font-display text-lg">Scriptorium</p>
+        <p class="mt-1 max-w-sm text-sm text-muted">
+          Atelier catholique francophone — Tolle, lege.
+        </p>
+      </div>
+    </div>
+    <nav class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted" aria-label="Pied de page">
+      <a href="/comparateur" class="hover:text-fg">Comparateur</a>
+      <a href="/art" class="hover:text-fg">Art</a>
+      <a href="/prieres" class="hover:text-fg">Prières</a>
+      <a href="/calendrier" class="hover:text-fg">Calendrier</a>
+      <a href="/a-propos" class="hover:text-fg">Colophon</a>
+    </nav>
+  </div>
+</footer>

@@ -1,91 +1,61 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  /** Wider content area (e.g. comparateur) */
+  wide?: boolean;
 }
 
-const { title, description = "" } = Astro.props;
+const {
+  title = "Scriptorium",
+  description = "Scriptorium — comparateur de traductions bibliques françaises, galerie d’art sacré, prières et calendrier liturgique.",
+  wide = false,
+} = Astro.props;
+
+const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="augustin">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#002654" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+    />
+    <script is:inline>
+      try {
+        var t = localStorage.getItem("scriptorium-theme") || "augustin";
+        document.documentElement.setAttribute("data-theme", t);
+        if (localStorage.getItem("quality-max") === "true")
+          document.documentElement.setAttribute("data-quality", "max");
+      } catch (e) {}
+    </script>
   </head>
-
-  <body class="antialiased min-h-screen" data-theme="light">
-    <!-- Contrôles globaux -->
-    <header class="fixed top-4 right-4 z-50 flex items-center gap-3">
-      <!-- Switch Qualité max -->
-      <label class="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] bg-[var(--card)] cursor-pointer select-none hover:opacity-90 transition">
-        <input type="checkbox" id="quality-toggle" class="rounded" />
-        Qualité max
-      </label>
-
-      <!-- Sélecteur de thème -->
-      <div class="relative group">
-        <button class="px-3 py-1.5 text-sm rounded-lg border border-[var(--border)] bg-[var(--card)] hover:opacity-90 transition">
-          Thème
-        </button>
-        <div class="absolute right-0 top-full mt-1 w-52 py-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-          <button data-theme-value="light" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Clair</button>
-          <button data-theme-value="dark" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Sombre</button>
-          <button data-theme-value="oled" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">OLED (noir pur)</button>
-          <button data-theme-value="royalty" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Royauté française</button>
-          <button data-theme-value="augustin" class="theme-option w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--bg-secondary)]">Saint Augustin</button>
-        </div>
+  <body class="antialiased">
+    <div class="flex min-h-dvh flex-col">
+      <Header />
+      <div class="flex-1">
+        <slot />
       </div>
-    </header>
-
-    <slot />
-
+      <Footer />
+    </div>
     <script>
-      // ===== Thème =====
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.body.setAttribute('data-theme', savedTheme);
-
-      document.querySelectorAll('.theme-option').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const theme = btn.getAttribute('data-theme-value');
-          if (theme) {
-            document.body.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-          }
-        });
-      });
-
-      // ===== Qualité max =====
-      const qualityToggle = document.getElementById('quality-toggle') as HTMLInputElement;
-      const savedQuality = localStorage.getItem('quality-max') === 'true';
-      
-      if (qualityToggle) {
-        qualityToggle.checked = savedQuality;
-        
-        // Appliquer au chargement
-        if (savedQuality) {
-          document.documentElement.setAttribute('data-quality', 'max');
-        }
-
-        qualityToggle.addEventListener('change', () => {
-          const enabled = qualityToggle.checked;
-          localStorage.setItem('quality-max', String(enabled));
-          
-          if (enabled) {
-            document.documentElement.setAttribute('data-quality', 'max');
-          } else {
-            document.documentElement.removeAttribute('data-quality');
-          }
-
-          // Recharger les images de la page courante si on est sur une œuvre
-          window.dispatchEvent(new CustomEvent('quality-change', { detail: { max: enabled } }));
-        });
-      }
+      import { hydrateThumbs } from "../lib/thumbs";
+      import { initLightbox } from "../lib/lightbox";
+      hydrateThumbs();
+      initLightbox();
     </script>
   </body>
 </html>

@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import OrnamentRule from "../components/OrnamentRule.astro";
+---
+
+<BaseLayout title="À propos" description="Colophon — Scriptorium">
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <p class="text-xs uppercase tracking-[0.22em] text-muted">Colophon</p>
+    <h1 class="mt-2 font-display text-4xl sm:text-5xl">À propos</h1>
+    <OrnamentRule class="my-5 max-w-sm" />
+    <div class="max-w-2xl">
+      <p class="text-lg leading-relaxed">
+        <strong class="font-display">Scriptorium</strong> est un atelier catholique
+        francophone : comparateur de traductions bibliques peu présentes ailleurs,
+        galerie d’art sacré, prières et année liturgique.
+      </p>
+      <p class="mt-4 text-muted">
+        <em>Tolle, lege — prends et lis.</em>
+      </p>
+    </div>
+  </main>
+</BaseLayout>

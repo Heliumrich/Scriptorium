@@ -1,0 +1,175 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OrnamentRule from "../../components/OrnamentRule.astro";
+import { fetchFromDirectus } from "../../lib/directus";
+import { parseTags } from "../../lib/catalog";
+import {
+  prayerTitle,
+  prayerStanzas,
+  renderMarkdown,
+  type Prayer,
+} from "../../lib/prayer";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const list =
+    (await fetchFromDirectus<Prayer[]>(
+      "prayers?filter[status][_eq]=published&fields=slug&limit=-1",
+    )) || [];
+  return list
+    .filter((p) => p?.slug)
+    .map((p) => ({ params: { slug: String(p.slug) } }));
+}
+
+const { slug } = Astro.params;
+const rows =
+  (await fetchFromDirectus<Prayer[]>(
+    `prayers?filter[status][_eq]=published&filter[slug][_eq]=${encodeURIComponent(slug!)}&limit=1`,
+  )) || [];
+const prayer = rows[0];
+
+if (!prayer) {
+  return Astro.redirect("/prieres");
+}
+
+const title = prayerTitle(prayer);
+const tags = parseTags(prayer.tags);
+const fr = prayerStanzas(prayer.text_french);
+const la = prayerStanzas(prayer.text_latin);
+const hasFr = fr.length > 0;
+const hasLa = la.length > 0;
+---
+
+<BaseLayout title={title} description={prayer.description?.slice(0, 160) || title}>
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <a href="/prieres" class="text-sm text-muted hover:text-fg">← Prières</a>
+    <p class="mt-4 text-xs uppercase tracking-[0.22em] text-muted">Prière</p>
+    <h1 class="mt-2 font-display text-4xl sm:text-5xl">{title}</h1>
+    {
+      prayer.title_latin && prayer.title_latin !== title && (
+        <p class="mt-2 font-display text-xl italic text-muted">{prayer.title_latin}</p>
+      )
+    }
+    <OrnamentRule class="my-5 max-w-sm" />
+
+    {
+      tags.length > 0 && (
+        <ul class="flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <li>
+              <a
+                href={`/prieres?tags=${encodeURIComponent(tag)}`}
+                class="tag-pill"
+              >
+                {tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      prayer.description && (
+        <div class="prayer-desc mt-8 text-muted" set:html={renderMarkdown(prayer.description)} />
+      )
+    }
+
+    {
+      (hasFr || hasLa) && (
+        <div class="mt-10">
+          <div class="flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1 w-fit" role="tablist">
+            {hasFr && (
+              <button type="button" data-lang="fr" class="lang-btn rounded-md px-3 py-1.5 text-sm bg-bg-secondary font-medium">
+                Français
+              </button>
+            )}
+            {hasLa && (
+              <button type="button" data-lang="la" class="lang-btn rounded-md px-3 py-1.5 text-sm text-muted">
+                Latin
+              </button>
+            )}
+            {hasFr && hasLa && (
+              <button type="button" data-lang="both" class="lang-btn rounded-md px-3 py-1.5 text-sm text-muted">
+                Les deux
+              </button>
+            )}
+          </div>
+
+          <div
+            id="prayer-texts"
+            class:list={["mt-6", hasFr && hasLa ? "grid gap-6 lg:grid-cols-2" : ""]}
+            data-mode={hasFr ? "fr" : "la"}
+          >
+            {hasFr && (
+              <section data-col="fr" class="panel rounded-xl p-5 sm:p-7">
+                <h2 class="font-display text-lg text-muted">Français</h2>
+                <div class="mt-4 space-y-6 text-lg leading-relaxed">
+                  {fr.map((stanza) => (
+                    <p>
+                      {stanza.map((line, i) => (
+                        <>
+                          {line}
+                          {i < stanza.length - 1 && <br />}
+                        </>
+                      ))}
+                    </p>
+                  ))}
+                </div>
+              </section>
+            )}
+            {hasLa && (
+              <section data-col="la" class:list={["panel rounded-xl p-5 sm:p-7", hasFr && "hidden"]}>
+                <h2 class="font-display text-lg text-muted">Latin</h2>
+                <div class="mt-4 space-y-6 text-lg leading-relaxed">
+                  {la.map((stanza) => (
+                    <p>
+                      {stanza.map((line, i) => (
+                        <>
+                          {line}
+                          {i < stanza.length - 1 && <br />}
+                        </>
+                      ))}
+                    </p>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<script>
+  const root = document.getElementById("prayer-texts");
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".lang-btn");
+  const fr = document.querySelector<HTMLElement>('[data-col="fr"]');
+  const la = document.querySelector<HTMLElement>('[data-col="la"]');
+  if (root && buttons.length) {
+    const saved = localStorage.getItem("prayer-lang");
+    function apply(mode: string) {
+      const hasFr = !!fr;
+      const hasLa = !!la;
+      if (mode === "both" && !(hasFr && hasLa)) mode = hasFr ? "fr" : "la";
+      if (mode === "fr" && !hasFr) mode = "la";
+      if (mode === "la" && !hasLa) mode = "fr";
+      buttons.forEach((btn) => {
+        const on = btn.dataset.lang === mode;
+        btn.classList.toggle("bg-bg-secondary", on);
+        btn.classList.toggle("font-medium", on);
+        btn.classList.toggle("text-muted", !on);
+      });
+      fr?.classList.toggle("hidden", mode === "la");
+      la?.classList.toggle("hidden", mode === "fr");
+      root!.classList.toggle("lg:grid-cols-2", mode === "both");
+      root!.classList.toggle("grid", mode === "both");
+      localStorage.setItem("prayer-lang", mode);
+    }
+    if (saved) apply(saved);
+    else apply(root.dataset.mode || "fr");
+    buttons.forEach((btn) => btn.addEventListener("click", () => apply(btn.dataset.lang || "fr")));
+  }
+</script>

@@ -7,6 +7,7 @@ export const GET: APIRoute = ({ url }) => {
   const book = url.searchParams.get('book')?.toUpperCase();
   const chapter = Number(url.searchParams.get('chapter'));
   const verse = url.searchParams.get('verse') ? Number(url.searchParams.get('verse')) : null;
+  const verseEnd = url.searchParams.get('verseEnd') ? Number(url.searchParams.get('verseEnd')) : null;
   const translationIds = url.searchParams.getAll('t');
 
   if (!book || !chapter || translationIds.length === 0) {
@@ -18,7 +19,17 @@ export const GET: APIRoute = ({ url }) => {
 
   for (const tid of translationIds) {
     let rows;
-    if (verse) {
+    if (verse && verseEnd && verseEnd !== verse) {
+      const from = Math.min(verse, verseEnd);
+      const to = Math.max(verse, verseEnd);
+      rows = db.prepare(`
+        SELECT v.verse, v.text, t.code, t.name_short
+        FROM verses v
+        JOIN translations t ON t.id = v.translation_id
+        WHERE v.translation_id = ? AND v.book = ? AND v.chapter = ? AND v.verse BETWEEN ? AND ?
+        ORDER BY v.verse
+      `).all(tid, book, chapter, from, to);
+    } else if (verse) {
       rows = db.prepare(`
         SELECT v.verse, v.text, t.code, t.name_short
         FROM verses v
@@ -45,7 +56,7 @@ export const GET: APIRoute = ({ url }) => {
 
   db.close();
 
-  return new Response(JSON.stringify({ book, chapter, verse, results }), {
+  return new Response(JSON.stringify({ book, chapter, verse, verseEnd, results }), {
     headers: { 'Content-Type': 'application/json' }
   });
 };
