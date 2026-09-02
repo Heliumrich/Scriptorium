@@ -108,7 +108,8 @@ export function updateFilterStatus(
 ) {
   const search = document.getElementById("catalog-search") as HTMLInputElement | null;
   const tags = selectedTags();
-  const hasFilters = tags.length > 0 || !!search?.value.trim();
+  const typesOn = document.querySelectorAll(".type-filter[aria-pressed='true']").length;
+  const hasFilters = tags.length > 0 || !!search?.value.trim() || typesOn > 0;
   const clearBtn = hasFilters
     ? ' <button type="button" class="clear-all-filters underline">Effacer les filtres</button>'
     : "";

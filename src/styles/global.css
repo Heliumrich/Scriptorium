@@ -265,7 +265,8 @@
     color 0.15s ease,
     border-color 0.15s ease;
 }
-.tag-pill:hover {
+.tag-pill:hover,
+.tag-pill[aria-pressed="true"] {
   background: var(--accent);
   color: var(--accent-fg);
   border-color: var(--accent);

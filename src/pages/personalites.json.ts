@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { fetchArtistsList, getAssetURL, fileIdOf } from "../lib/directus";
 import { parseTags, searchHaystack, jsonItems } from "../lib/catalog";
+import { parsePersonTypes } from "../lib/people";
 
 export const prerender = true;
 
@@ -14,12 +15,11 @@ export const GET: APIRoute = async () => {
     subtitle: artist.short_description || null,
     thumb: getAssetURL(fileIdOf(artist.photo), "thumbnail"),
     tags: parseTags(artist.tags),
+    types: parsePersonTypes(artist.type),
     haystack: searchHaystack([
       artist.name,
       artist.short_description,
       artist.type,
-      artist.birth_year,
-      artist.death_year,
     ]),
   }));
 

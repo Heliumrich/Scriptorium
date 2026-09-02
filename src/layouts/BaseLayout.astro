@@ -17,7 +17,7 @@ const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
 ---
 
 <!doctype html>
-<html lang="fr" data-theme="augustin">
+<html lang="fr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,7 +33,11 @@ const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
     />
     <script is:inline>
       try {
-        var t = localStorage.getItem("scriptorium-theme") || "augustin";
+        var t = localStorage.getItem("scriptorium-theme");
+        if (!t) {
+          var m = document.cookie.match(/(?:^|; )scriptorium-theme=([^;]*)/);
+          t = m ? decodeURIComponent(m[1]) : "light";
+        }
         document.documentElement.setAttribute("data-theme", t);
         if (localStorage.getItem("quality-max") === "true")
           document.documentElement.setAttribute("data-quality", "max");

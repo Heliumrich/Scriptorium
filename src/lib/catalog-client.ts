@@ -28,6 +28,7 @@ export type CatalogItem = {
   xlarge?: string | null;
   original?: string | null;
   tags: string[];
+  types?: string[];
   haystack: string;
 };
 
@@ -71,8 +72,17 @@ export function initCatalog(opts: Options) {
   let mode: FilterMode = initial.mode;
   let page = initial.page;
 
+  function selectedTypes() {
+    return [...document.querySelectorAll<HTMLButtonElement>(".type-filter[aria-pressed='true']")].map(
+      (btn) => btn.dataset.type || "",
+    ).filter(Boolean);
+  }
+
   function render() {
-    const list = filterCatalog(items, search?.value || "", selectedTags(), mode);
+    const types = selectedTypes();
+    const list = filterCatalog(items, search?.value || "", selectedTags(), mode).filter((item) =>
+      types.length === 0 || types.some((type) => item.types?.includes(type)),
+    );
     const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
     if (page > pages) page = pages;
     const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -80,7 +90,8 @@ export function initCatalog(opts: Options) {
       grid.dataset.ssr === "1" &&
       page === 1 &&
       !search?.value.trim() &&
-      selectedTags().length === 0;
+      selectedTags().length === 0 &&
+      types.length === 0;
     if (!keepSsr) {
       grid.removeAttribute("data-ssr");
       grid.innerHTML = slice.map((item, i) => cardHtml(item, opts.kind, i < 8)).join("");
@@ -108,7 +119,12 @@ export function initCatalog(opts: Options) {
     );
     markActiveButtons(".mode-btn", "mode", mode);
     renderPager(pager, pages, page);
-    writeFilterParams({ search, mode, page });
+    writeFilterParams({
+      search,
+      mode,
+      page,
+      extra: { types: types.length ? types.join(",") : null },
+    });
   }
 
   bindCatalogChrome({
@@ -132,11 +148,29 @@ export function initCatalog(opts: Options) {
     },
     onClearAll() {
       uncheckTags();
+      document.querySelectorAll<HTMLButtonElement>(".type-filter").forEach((btn) => {
+        btn.setAttribute("aria-pressed", "false");
+      });
       if (search) search.value = "";
       page = 1;
       render();
     },
   });
+
+  document.querySelectorAll<HTMLButtonElement>(".type-filter").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const on = btn.getAttribute("aria-pressed") === "true";
+      btn.setAttribute("aria-pressed", on ? "false" : "true");
+      page = 1;
+      render();
+    });
+  });
+
+  const initialTypes = new URLSearchParams(location.search).get("types") || "";
+  for (const type of initialTypes.split(",").filter(Boolean)) {
+    const btn = document.querySelector<HTMLButtonElement>(`.type-filter[data-type="${CSS.escape(type)}"]`);
+    if (btn) btn.setAttribute("aria-pressed", "true");
+  }
 
   fetch(opts.jsonUrl)
     .then((res) => res.json())

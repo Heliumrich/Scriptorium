@@ -120,6 +120,12 @@ function isActive(item: (typeof NAV)[number]) {
   function applyTheme(theme: string) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
+    const cookie =
+      THEME_KEY + "=" + encodeURIComponent(theme) + "; path=/; max-age=31536000; SameSite=Lax";
+    document.cookie = cookie;
+    if (location.hostname.endsWith("literae.ch")) {
+      document.cookie = cookie + "; domain=.literae.ch";
+    }
   }
 
   function applyQuality(max: boolean) {
@@ -129,7 +135,7 @@ function isActive(item: (typeof NAV)[number]) {
     window.dispatchEvent(new CustomEvent("quality-change", { detail: { max } }));
   }
 
-  const savedTheme = localStorage.getItem(THEME_KEY) || "augustin";
+  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
   applyTheme(savedTheme);
 
   const savedQuality = localStorage.getItem(QUALITY_KEY) === "true";

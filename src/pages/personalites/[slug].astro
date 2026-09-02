@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import OrnamentRule from "../../components/OrnamentRule.astro";
 import Thumb from "../../components/Thumb.astro";
 import {
   fetchFromDirectus,
@@ -10,6 +9,7 @@ import {
   fileIdOf,
   looksLikeHtml,
 } from "../../lib/directus";
+import { parsePersonTypes, personTypeLabel, formatPersonRoles } from "../../lib/people";
 
 export const prerender = true;
 
@@ -47,11 +47,7 @@ const depictedWorks =
   )) || [];
 
 const photoSrc = getAssetURL(fileIdOf(artist.photo), "medium");
-const types = artist.type
-  ? Array.isArray(artist.type)
-    ? artist.type
-    : [artist.type]
-  : [];
+const types = parsePersonTypes(artist.type);
 const tags = Array.isArray(artist.tags)
   ? artist.tags
   : typeof artist.tags === "string"
@@ -87,7 +83,9 @@ const tags = Array.isArray(artist.tags)
       </div>
 
       <div>
-        <p class="text-xs uppercase tracking-[0.22em] text-muted">Artiste</p>
+        <p class="text-xs uppercase tracking-[0.22em] text-muted">
+          {formatPersonRoles(types) || "Personnalité"}
+        </p>
         <h1 class="mt-2 font-display text-4xl">{artist.name}</h1>
         {
           (artist.birth_year || artist.death_year) && (
@@ -99,18 +97,11 @@ const tags = Array.isArray(artist.tags)
 
         <div class="mt-4 flex flex-wrap gap-2">
           {
-            types.map((t: string) => (
-              <span class="tag-pill capitalize">
-                {t}
-              </span>
+            types.map((t) => (
+              <a href={`/personalites?types=${t}`} class="tag-pill">
+                {personTypeLabel(t)}
+              </a>
             ))
-          }
-          {
-            (artist.birth_year || artist.death_year) && (
-              <span class="tag-pill">
-                {artist.birth_year || "?"} – {artist.death_year || "?"}
-              </span>
-            )
           }
           {
             tags.map((t: string) => (
@@ -138,11 +129,10 @@ const tags = Array.isArray(artist.tags)
       artist.biography && (
         <section class="mt-12">
           <h2 class="font-display text-2xl">Biographie</h2>
-          <OrnamentRule class="my-4 max-w-xs" />
           {looksLikeHtml(artist.biography) ? (
-            <div class="prose max-w-none text-justify" set:html={artist.biography} />
+            <div class="prose mt-4 max-w-none text-justify" set:html={artist.biography} />
           ) : (
-            <p class="max-w-3xl whitespace-pre-line text-justify leading-relaxed">
+            <p class="mt-4 max-w-none whitespace-pre-line text-justify leading-relaxed">
               {artist.biography}
             </p>
           )}
@@ -154,8 +144,7 @@ const tags = Array.isArray(artist.tags)
       createdWorks.length > 0 && (
         <section class="mt-14">
           <h2 class="font-display text-2xl">Œuvres</h2>
-          <OrnamentRule class="my-4 max-w-xs" />
-          <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {createdWorks.map((work: any, i: number) => {
               const src = getAssetURL(fileIdOf(work.image), "thumbnail");
               return (
@@ -177,8 +166,7 @@ const tags = Array.isArray(artist.tags)
       depictedWorks.length > 0 && (
         <section class="mt-14">
           <h2 class="font-display text-2xl">Apparaît dans</h2>
-          <OrnamentRule class="my-4 max-w-xs" />
-          <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {depictedWorks.map((work: any) => {
               const src = getAssetURL(fileIdOf(work.image), "thumbnail");
               return (

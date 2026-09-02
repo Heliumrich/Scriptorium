@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import OrnamentRule from "../../components/OrnamentRule.astro";
 import {
   fetchFromDirectus,
   getAssetURL,
@@ -63,7 +62,8 @@ const tags = Array.isArray(work.tags)
   <main class="mx-auto max-w-6xl px-4 py-10">
     <a href="/oeuvres" class="text-sm text-muted hover:text-fg">← Œuvres</a>
 
-    <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+    <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+      <div>
       <div class="overflow-hidden rounded-xl bg-bg-secondary">
         {
           imageSrc ? (
@@ -92,6 +92,21 @@ const tags = Array.isArray(work.tags)
           )
         }
       </div>
+        {
+          work.description && (
+            <section class="mt-10">
+              <h2 class="font-display text-2xl">Notice</h2>
+              {looksLikeHtml(work.description) ? (
+                <div class="prose mt-4 max-w-none text-justify" set:html={work.description} />
+              ) : (
+                <p class="mt-4 whitespace-pre-line text-justify leading-relaxed">
+                  {work.description}
+                </p>
+              )}
+            </section>
+          )
+        }
+      </div>
 
       <div>
         <p class="text-xs uppercase tracking-[0.22em] text-muted">Œuvre</p>
@@ -111,7 +126,7 @@ const tags = Array.isArray(work.tags)
                   {work.artist.slug ? (
                     <a
                       href={`/personalites/${work.artist.slug}`}
-                      class="hover:underline"
+                      class="tag-pill underline decoration-transparent hover:decoration-current"
                     >
                       {work.artist.name}
                     </a>
@@ -119,6 +134,14 @@ const tags = Array.isArray(work.tags)
                     work.artist.name
                   )}
                 </dd>
+              </div>
+            )
+          }
+          {
+            (work.year_depicted || work.depicted_year) && (
+              <div class="flex gap-3">
+                <dt class="w-28 shrink-0 text-muted">Année dépeinte</dt>
+                <dd>{work.year_depicted || work.depicted_year}</dd>
               </div>
             )
           }
@@ -210,25 +233,6 @@ const tags = Array.isArray(work.tags)
         }
       </div>
     </div>
-
-    {
-      work.description && (
-        <section class="mt-14">
-          <h2 class="font-display text-2xl">Notice</h2>
-          <OrnamentRule class="my-4 max-w-xs" />
-          {looksLikeHtml(work.description) ? (
-            <div
-              class="prose max-w-3xl text-justify"
-              set:html={work.description}
-            />
-          ) : (
-            <p class="max-w-3xl whitespace-pre-line text-justify leading-relaxed">
-              {work.description}
-            </p>
-          )}
-        </section>
-      )
-    }
   </main>
 </BaseLayout>
 
