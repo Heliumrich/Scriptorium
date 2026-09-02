@@ -32,11 +32,13 @@ export function searchHaystack(parts: Array<string | null | undefined>) {
 }
 
 export function matchesQuery(haystack: string, query: string) {
-  const tokens = normalizeText(query).split(" ").filter((t) => t.length >= 2 || t.length === 1);
+  const tokens = normalizeText(query).split(" ").filter(Boolean);
   if (!tokens.length) return true;
   return tokens.every((token) => haystack.includes(token));
 }
 
-export function pageCount(total: number, size = PAGE_SIZE) {
-  return Math.max(1, Math.ceil(total / size));
+export function jsonItems(items: unknown) {
+  return new Response(JSON.stringify({ items }), {
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
 }

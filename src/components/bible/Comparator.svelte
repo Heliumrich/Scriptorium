@@ -16,7 +16,7 @@
   let columns: Column[] = [];
   let current = { book: '', chapter: 0, verse: null as number | null, verseEnd: null as number | null };
   let nav = { prev: null as any, next: null as any };
-  let ready = false; // ← empêche les appels trop tôt
+  let ready = false;
 
   onMount(async () => {
     const saved = localStorage.getItem('bible-comparator');
@@ -36,7 +36,6 @@
     if (selectedIds.length === 0 && translations.length > 0) {
       selectedIds = translations.slice(0, numCols).map(t => t.id);
     } else {
-      // S'assurer qu'on a le bon nombre d'IDs
       selectedIds = selectedIds.slice(0, numCols);
       while (selectedIds.length < numCols) {
         selectedIds.push(translations[0]?.id);
@@ -67,7 +66,7 @@
 
   function setTranslation(index: number, id: number) {
     selectedIds[index] = id;
-    selectedIds = [...selectedIds]; // trigger réactif propre
+    selectedIds = [...selectedIds];
     savePrefs();
     load();
   }

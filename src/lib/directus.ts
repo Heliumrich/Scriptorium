@@ -3,10 +3,6 @@ export const DIRECTUS_URL =
 
 export type AssetKey = "thumbnail" | "medium" | "large" | "xlarge";
 
-export function getDirectusUrl() {
-  return DIRECTUS_URL;
-}
-
 export async function fetchFromDirectus<T = unknown>(
   endpoint: string,
 ): Promise<T | null> {

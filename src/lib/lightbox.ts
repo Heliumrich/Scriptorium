@@ -11,6 +11,7 @@ export type LightboxItem = {
 
 let gallery: LightboxItem[] = [];
 let index = 0;
+let bound = false;
 
 function itemSrc(item: LightboxItem) {
   return pickAssetSrc({
@@ -80,12 +81,10 @@ function show() {
     link.textContent = item.alt;
     if (item.href) {
       link.href = item.href;
-      link.style.pointerEvents = "auto";
-      link.style.textDecoration = "underline";
+      link.classList.add("is-link");
     } else {
       link.removeAttribute("href");
-      link.style.pointerEvents = "none";
-      link.style.textDecoration = "none";
+      link.classList.remove("is-link");
     }
   } else if (cap) {
     cap.textContent = item.alt;
@@ -133,8 +132,8 @@ export function closeLightbox() {
 
 export function initLightbox() {
   ensureLightbox();
-  if ((window as any).__lbKeys) return;
-  (window as any).__lbKeys = true;
+  if (bound) return;
+  bound = true;
   document.addEventListener("keydown", (e) => {
     const root = document.getElementById("lightbox");
     if (!root || root.hidden) return;

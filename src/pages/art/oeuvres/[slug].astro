@@ -246,7 +246,6 @@ const tags = Array.isArray(work.tags)
     })
     .catch(() => {});
 
-  // Qualité max : bascule vers l'original si demandé
   function syncQuality() {
     const max = document.documentElement.getAttribute("data-quality") === "max";
     document.querySelectorAll<HTMLImageElement>("[data-quality-src]").forEach((img) => {

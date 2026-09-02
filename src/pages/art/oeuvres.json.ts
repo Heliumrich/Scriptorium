@@ -5,7 +5,7 @@ import {
   getArtworkTitle,
   fileIdOf,
 } from "../../lib/directus";
-import { parseTags, searchHaystack } from "../../lib/catalog";
+import { parseTags, searchHaystack, jsonItems } from "../../lib/catalog";
 
 export const prerender = true;
 
@@ -39,7 +39,5 @@ export const GET: APIRoute = async () => {
     };
   });
 
-  return new Response(JSON.stringify({ items }), {
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-  });
+  return jsonItems(items);
 };

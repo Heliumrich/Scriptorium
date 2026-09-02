@@ -381,6 +381,12 @@
 }
 .lightbox-cap-link {
   color: inherit;
+  pointer-events: none;
+  text-decoration: none;
+}
+.lightbox-cap-link.is-link {
+  pointer-events: auto;
+  text-decoration: underline;
 }
 .lightbox-close {
   position: absolute;
