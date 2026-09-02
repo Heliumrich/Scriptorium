@@ -60,7 +60,7 @@ const hasError = artists.length === 0 && artworks.length === 0;
 
     <div class="mt-8 grid gap-4 sm:grid-cols-2">
       <a
-        href="/art/personalites"
+        href="/personalites"
         class="panel rounded-xl p-8 transition-transform hover:-translate-y-0.5"
       >
         <h2 class="font-display text-3xl">Personnalités illustres</h2>
@@ -73,7 +73,7 @@ const hasError = artists.length === 0 && artworks.length === 0;
         </p>
       </a>
       <a
-        href="/art/oeuvres"
+        href="/oeuvres"
         class="panel rounded-xl p-8 transition-transform hover:-translate-y-0.5"
       >
         <h2 class="font-display text-3xl">Œuvres</h2>
@@ -97,7 +97,7 @@ const hasError = artists.length === 0 && artworks.length === 0;
               const id = fileIdOf(work.image);
               const src = getAssetURL(id, "thumbnail");
               return (
-                <a href={`/art/oeuvres/${work.slug}`} class="group">
+                <a href={`/oeuvres/${work.slug}`} class="group">
                   <Thumb src={src} alt={getArtworkTitle(work)} loading={i < 3 ? "eager" : "lazy"} fetchpriority={i < 3 ? "high" : "low"} />
                   <h3 class="mt-3 font-display text-lg group-hover:underline">
                     {getArtworkTitle(work)}

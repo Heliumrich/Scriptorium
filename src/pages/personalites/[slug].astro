@@ -1,0 +1,210 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OrnamentRule from "../../components/OrnamentRule.astro";
+import Thumb from "../../components/Thumb.astro";
+import {
+  fetchFromDirectus,
+  fetchAllFromDirectus,
+  getAssetURL,
+  getArtworkTitle,
+  fileIdOf,
+  looksLikeHtml,
+} from "../../lib/directus";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const list =
+    await fetchAllFromDirectus<any>(
+      "artists?filter[status][_eq]=published&fields=slug&sort=name",
+    );
+  return list
+    .filter((a) => a?.slug)
+    .map((a) => ({ params: { slug: String(a.slug) } }));
+}
+
+const { slug } = Astro.params;
+
+const artists =
+  (await fetchFromDirectus<any[]>(
+    `artists?filter[status][_eq]=published&filter[slug][_eq]=${encodeURIComponent(slug!)}&limit=1`,
+  )) || [];
+
+const artist = artists[0];
+
+if (!artist) {
+  return Astro.redirect("/personalites");
+}
+
+const createdWorks =
+  (await fetchFromDirectus<any[]>(
+    `artworks?filter[status][_eq]=published&filter[artist][_eq]=${artist.id}&fields=id,slug,title_original,title_french,title_english,year,image&sort=-year`,
+  )) || [];
+
+const depictedWorks =
+  (await fetchFromDirectus<any[]>(
+    `artworks?filter[status][_eq]=published&filter[depicted][artists_id][_eq]=${artist.id}&fields=id,slug,title_original,title_french,title_english,year,image&sort=-year`,
+  )) || [];
+
+const photoSrc = getAssetURL(fileIdOf(artist.photo), "medium");
+const types = artist.type
+  ? Array.isArray(artist.type)
+    ? artist.type
+    : [artist.type]
+  : [];
+const tags = Array.isArray(artist.tags)
+  ? artist.tags
+  : typeof artist.tags === "string"
+    ? artist.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
+    : [];
+---
+
+<BaseLayout
+  title={artist.name}
+  description={artist.short_description || `Notice de ${artist.name}`}
+>
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <a href="/personalites" class="text-sm text-muted hover:text-fg">← Personnalités illustres</a>
+
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-[260px_1fr]">
+      <div class="aspect-[3/4] overflow-hidden rounded-xl bg-bg-secondary">
+        {
+          photoSrc ? (
+            <img
+              src={photoSrc}
+              alt={artist.name}
+              width={800}
+              height={1067}
+              class="h-full w-full object-cover"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          ) : (
+            <div class="grid h-full place-items-center text-muted">Pas d’image</div>
+          )
+        }
+      </div>
+
+      <div>
+        <p class="text-xs uppercase tracking-[0.22em] text-muted">Artiste</p>
+        <h1 class="mt-2 font-display text-4xl">{artist.name}</h1>
+        {
+          (artist.birth_year || artist.death_year) && (
+            <p class="mt-1 text-muted">
+              {[artist.birth_year, artist.death_year].filter(Boolean).join(" – ")}
+            </p>
+          )
+        }
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          {
+            types.map((t: string) => (
+              <span class="tag-pill capitalize">
+                {t}
+              </span>
+            ))
+          }
+          {
+            (artist.birth_year || artist.death_year) && (
+              <span class="tag-pill">
+                {artist.birth_year || "?"} – {artist.death_year || "?"}
+              </span>
+            )
+          }
+          {
+            tags.map((t: string) => (
+              <a
+                href={`/personalites?tags=${encodeURIComponent(t)}`}
+                class="tag-pill"
+              >
+                {t}
+              </a>
+            ))
+          }
+        </div>
+
+        {
+          artist.short_description && (
+            <p class="mt-6 text-lg leading-relaxed text-justify">
+              {artist.short_description}
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      artist.biography && (
+        <section class="mt-12">
+          <h2 class="font-display text-2xl">Biographie</h2>
+          <OrnamentRule class="my-4 max-w-xs" />
+          {looksLikeHtml(artist.biography) ? (
+            <div class="prose max-w-none text-justify" set:html={artist.biography} />
+          ) : (
+            <p class="max-w-3xl whitespace-pre-line text-justify leading-relaxed">
+              {artist.biography}
+            </p>
+          )}
+        </section>
+      )
+    }
+
+    {
+      createdWorks.length > 0 && (
+        <section class="mt-14">
+          <h2 class="font-display text-2xl">Œuvres</h2>
+          <OrnamentRule class="my-4 max-w-xs" />
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {createdWorks.map((work: any, i: number) => {
+              const src = getAssetURL(fileIdOf(work.image), "thumbnail");
+              return (
+                <a href={`/oeuvres/${work.slug}`} class="group">
+                  <Thumb src={src} alt={getArtworkTitle(work)} loading={i < 4 ? "eager" : "lazy"} fetchpriority={i < 4 ? "high" : "low"} />
+                  <h3 class="mt-2 font-display text-base group-hover:underline">
+                    {getArtworkTitle(work)}
+                  </h3>
+                  {work.year && <p class="text-sm text-muted">{work.year}</p>}
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      depictedWorks.length > 0 && (
+        <section class="mt-14">
+          <h2 class="font-display text-2xl">Apparaît dans</h2>
+          <OrnamentRule class="my-4 max-w-xs" />
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {depictedWorks.map((work: any) => {
+              const src = getAssetURL(fileIdOf(work.image), "thumbnail");
+              return (
+                <a href={`/oeuvres/${work.slug}`} class="group">
+                  <div class="aspect-square overflow-hidden rounded-lg bg-bg-secondary">
+                    {src ? (
+                      <img
+                        src={src}
+                        alt={getArtworkTitle(work)}
+                        width={400}
+                        height={400}
+                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : null}
+                  </div>
+                  <h3 class="mt-2 font-display text-base group-hover:underline">
+                    {getArtworkTitle(work)}
+                  </h3>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OrnamentRule from "../../components/OrnamentRule.astro";
+import CatalogToolbar from "../../components/CatalogToolbar.astro";
+import Thumb from "../../components/Thumb.astro";
+import { fetchArtistsList, getAssetURL, fileIdOf } from "../../lib/directus";
+import { PAGE_SIZE, parseTags } from "../../lib/catalog";
+
+export const prerender = true;
+
+const artists = await fetchArtistsList();
+
+const allTags = [...new Set(artists.flatMap((a) => parseTags(a.tags)))].sort((a, b) =>
+  a.localeCompare(b, "fr"),
+);
+const firstPage = artists.slice(0, PAGE_SIZE);
+---
+
+<BaseLayout title="Personnalités illustres" description="Personnalités illustres du catalogue Scriptorium">
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <a href="https://art.literae.ch/" class="text-sm text-muted hover:text-fg">← Art</a>
+    <p class="mt-4 text-xs uppercase tracking-[0.22em] text-muted">Notices</p>
+    <h1 class="mt-2 font-display text-4xl sm:text-5xl">Personnalités illustres</h1>
+    <OrnamentRule class="my-5 max-w-sm" />
+
+    <CatalogToolbar tags={allTags} searchPlaceholder="Rechercher un nom…" />
+    <p id="catalog-status" class="mt-3 text-sm text-muted"></p>
+
+    <p id="catalog-empty" class="panel mt-8 hidden rounded-xl p-6 font-display text-xl">
+      Aucune personnalité ne correspond.
+    </p>
+
+    <div id="catalog-grid" class="mt-8 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4" data-ssr="1">
+      {
+        firstPage.map((artist, i) => {
+          const src = getAssetURL(fileIdOf(artist.photo), "thumbnail");
+          return (
+            <a href={`/personalites/${artist.slug}`} class="group">
+              <Thumb src={src} alt={artist.name} loading={i < 8 ? "eager" : "lazy"} fetchpriority={i < 8 ? "high" : "low"} />
+              <h2 class="mt-3 font-display text-lg group-hover:underline">{artist.name}</h2>
+              {artist.short_description && (
+                <p class="mt-1 line-clamp-2 text-sm text-muted">{artist.short_description}</p>
+              )}
+            </a>
+          );
+        })
+      }
+    </div>
+
+    <nav id="catalog-pager" class="mt-10 flex flex-wrap justify-center gap-2" aria-label="Pagination"></nav>
+  </main>
+</BaseLayout>
+
+<script>
+  import { initCatalog } from "../../lib/catalog-client";
+  initCatalog({
+    jsonUrl: "/personalites.json",
+    kind: "artist",
+  });
+</script>

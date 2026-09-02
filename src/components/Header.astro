@@ -3,24 +3,26 @@ import Fleur from "./Fleur.astro";
 
 const pathname = Astro.url.pathname;
 
+const MAIN = "https://literae.ch";
+const ART = "https://art.literae.ch";
+
 const NAV = [
-  { href: "/", label: "Accueil" },
-  { href: "/comparateur", label: "Comparateur" },
-  { href: "/art", label: "Art" },
-  { href: "/prieres", label: "Prières" },
-  { href: "/calendrier", label: "Calendrier" },
-  { href: "/a-propos", label: "À propos" },
+  { href: `${MAIN}/`, label: "Accueil", match: (p: string) => p === "/" },
+  { href: `${MAIN}/comparateur`, label: "Comparateur", match: (p: string) => p.startsWith("/comparateur") },
+  { href: `${ART}/`, label: "Art", match: (p: string) => p === "/art" || p.startsWith("/art/") || p.startsWith("/oeuvres") || p.startsWith("/personalites") },
+  { href: `${MAIN}/prieres`, label: "Prières", match: (p: string) => p.startsWith("/prieres") },
+  { href: `${MAIN}/calendrier`, label: "Calendrier", match: (p: string) => p.startsWith("/calendrier") },
+  { href: `${MAIN}/a-propos`, label: "À propos", match: (p: string) => p.startsWith("/a-propos") },
 ];
 
-function isActive(href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(href + "/");
+function isActive(item: (typeof NAV)[number]) {
+  return item.match(pathname);
 }
 ---
 
 <header class="site-header sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-md">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
-    <a href="/" class="flex items-center gap-2.5 text-fg no-underline">
+    <a href="https://literae.ch/" class="flex items-center gap-2.5 text-fg no-underline">
       <Fleur class="size-8 text-gold" title="Scriptorium" />
       <span class="font-display text-xl tracking-tight">Scriptorium</span>
     </a>
@@ -32,9 +34,9 @@ function isActive(href: string) {
             href={item.href}
             class:list={[
               "rounded-md px-3 py-2 text-sm transition-colors hover:bg-bg-secondary hover:text-fg",
-              isActive(item.href) ? "bg-bg-secondary text-fg" : "text-muted",
+              isActive(item) ? "bg-bg-secondary text-fg" : "text-muted",
             ]}
-            aria-current={isActive(item.href) ? "page" : undefined}
+            aria-current={isActive(item) ? "page" : undefined}
           >
             {item.label}
           </a>
@@ -96,7 +98,7 @@ function isActive(href: string) {
             href={item.href}
             class:list={[
               "rounded-md px-3 py-2.5 text-sm",
-              isActive(item.href) ? "bg-bg-secondary text-fg" : "text-muted",
+              isActive(item) ? "bg-bg-secondary text-fg" : "text-muted",
             ]}
           >
             {item.label}
