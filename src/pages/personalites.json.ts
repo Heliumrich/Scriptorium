@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { fetchArtistsList, getAssetURL, fileIdOf } from "../../lib/directus";
-import { parseTags, searchHaystack, jsonItems } from "../../lib/catalog";
+import { fetchArtistsList, getAssetURL, fileIdOf } from "../lib/directus";
+import { parseTags, searchHaystack, jsonItems } from "../lib/catalog";
 
 export const prerender = true;
 

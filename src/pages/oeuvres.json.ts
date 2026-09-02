@@ -4,8 +4,8 @@ import {
   getAssetURL,
   getArtworkTitle,
   fileIdOf,
-} from "../../lib/directus";
-import { parseTags, searchHaystack, jsonItems } from "../../lib/catalog";
+} from "../lib/directus";
+import { parseTags, searchHaystack, jsonItems } from "../lib/catalog";
 
 export const prerender = true;
 
