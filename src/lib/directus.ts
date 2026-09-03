@@ -3,7 +3,7 @@ export const DIRECTUS_URL =
 
 const DIRECTUS_TOKEN = import.meta.env.DIRECTUS_TOKEN as string | undefined;
 
-export type AssetKey = "thumbnail" | "medium" | "large" | "xlarge";
+export type AssetKey = "thumbnail" | "small" | "medium" | "large" | "xlarge";
 
 function collectionOf(endpoint: string) {
   return endpoint.split("?")[0];

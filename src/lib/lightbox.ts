@@ -51,12 +51,21 @@ function ensureLightbox() {
     <button type="button" class="lightbox-prev" aria-label="Œuvre précédente">‹</button>
     <img class="lightbox-img" alt="" />
     <button type="button" class="lightbox-next" aria-label="Œuvre suivante">›</button>
-    <p class="lightbox-cap"><a class="lightbox-cap-link" href="#"></a></p>
+    <p class="lightbox-cap">
+      <a class="lightbox-cap-link" href="#"></a>
+      <a class="lightbox-dl" hidden download aria-label="Télécharger">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 4v12"></path>
+          <path d="M7 11l5 5 5-5"></path>
+          <path d="M5 20h14"></path>
+        </svg>
+      </a>
+    </p>
   `;
   document.body.appendChild(root);
   root.addEventListener("click", (e) => {
     const t = e.target as HTMLElement;
-    if (t.closest(".lightbox-cap-link")) return;
+    if (t.closest(".lightbox-cap-link") || t.closest(".lightbox-dl")) return;
     if (t === root || t.classList.contains("lightbox-close")) closeLightbox();
     if (t.classList.contains("lightbox-prev")) step(-1);
     if (t.classList.contains("lightbox-next")) step(1);
@@ -89,6 +98,16 @@ function show() {
   } else if (cap) {
     cap.textContent = item.alt;
   }
+  const dl = root.querySelector<HTMLAnchorElement>(".lightbox-dl");
+  if (dl) {
+    if (item.original) {
+      dl.href = item.original;
+      dl.hidden = false;
+    } else {
+      dl.removeAttribute("href");
+      dl.hidden = true;
+    }
+  }
   const many = gallery.length > 1;
   prev?.classList.toggle("hidden", !many);
   next?.classList.toggle("hidden", !many);
@@ -97,19 +116,17 @@ function show() {
 }
 
 export function openLightbox(el: HTMLElement) {
-  if (!gallery.length) {
-    gallery = [...document.querySelectorAll<HTMLElement>("[data-lightbox]")].map(fromEl);
-  }
-  const key = el.dataset.original || el.dataset.large || el.getAttribute("data-alt");
-  const found = gallery.findIndex(
-    (item) =>
-      item.original === el.dataset.original ||
-      item.large === el.dataset.large ||
-      item.alt === el.getAttribute("data-alt"),
-  );
-  index = found >= 0 ? found : 0;
-  if (found < 0 && key) {
-    gallery = [fromEl(el), ...gallery];
+  const current = fromEl(el);
+  if (gallery.length > 1) {
+    const found = gallery.findIndex(
+      (item) =>
+        item.original === el.dataset.original ||
+        item.large === el.dataset.large ||
+        item.alt === el.getAttribute("data-alt"),
+    );
+    index = found >= 0 ? found : 0;
+  } else {
+    gallery = [current];
     index = 0;
   }
   show();

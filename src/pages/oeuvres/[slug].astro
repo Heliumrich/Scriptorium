@@ -35,8 +35,9 @@ if (!work) {
 
 const title = getArtworkTitle(work);
 const imageId = fileIdOf(work.image);
+const imageSmall = getAssetURL(imageId, "small");
 const imageMedium = getAssetURL(imageId, "medium");
-const imageSrc = getAssetURL(imageId, "large");
+const imageLarge = getAssetURL(imageId, "large");
 const imageXlarge = getAssetURL(imageId, "xlarge");
 const imageOriginal = getAssetURL(imageId);
 
@@ -66,12 +67,12 @@ const tags = Array.isArray(work.tags)
       <div>
       <div class="overflow-hidden rounded-xl bg-bg-secondary">
         {
-          imageSrc ? (
+          imageSmall ? (
             <img
-              src={imageSrc}
+              src={imageSmall}
               alt={title}
-              width={2000}
-              height={2000}
+              width={800}
+              height={800}
               class="w-full cursor-zoom-in object-contain"
               loading="eager"
               fetchpriority="high"
@@ -80,7 +81,7 @@ const tags = Array.isArray(work.tags)
               data-alt={title}
               data-href={`/oeuvres/${slug}`}
               data-medium={imageMedium || ""}
-              data-large={imageSrc}
+              data-large={imageLarge || ""}
               data-xlarge={imageXlarge || ""}
               data-original={imageOriginal || ""}
               data-quality-src={imageOriginal || undefined}
@@ -92,6 +93,22 @@ const tags = Array.isArray(work.tags)
           )
         }
       </div>
+        {
+          imageOriginal && (
+            <a
+              href={imageOriginal}
+              download
+              class="mt-3 inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm text-fg hover:bg-bg-secondary"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 4v12"></path>
+                <path d="M7 11l5 5 5-5"></path>
+                <path d="M5 20h14"></path>
+              </svg>
+              Télécharger
+            </a>
+          )
+        }
         {
           work.description && (
             <section class="mt-10">
@@ -237,23 +254,6 @@ const tags = Array.isArray(work.tags)
 </BaseLayout>
 
 <script>
-  import { setLightboxGallery } from "../../lib/lightbox";
-
-  fetch("/oeuvres.json")
-    .then((r) => r.json())
-    .then((data) => {
-      setLightboxGallery(
-        (data.items || []).map((item: { title: string; medium?: string; large?: string; xlarge?: string; original?: string }) => ({
-          alt: item.title,
-          medium: item.medium,
-          large: item.large,
-          xlarge: item.xlarge,
-          original: item.original,
-        })),
-      );
-    })
-    .catch(() => {});
-
   function syncQuality() {
     const max = document.documentElement.getAttribute("data-quality") === "max";
     document.querySelectorAll<HTMLImageElement>("[data-quality-src]").forEach((img) => {
