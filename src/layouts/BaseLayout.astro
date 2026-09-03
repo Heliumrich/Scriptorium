@@ -10,12 +10,13 @@ interface Props {
 }
 
 const {
-  title = "Scriptorium",
-  description = "Scriptorium — comparateur de traductions bibliques françaises, galerie d’art sacré, prières et calendrier liturgique.",
+  title = "Literae",
+  description = "Literae — un lieu pour lire la Sainte Écriture, contempler l’art chrétien, prier avec les mots de l’Église, et marcher au rythme de l’année liturgique.",
   gallery = false,
 } = Astro.props;
 
-const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
+const fullTitle = title === "Literae" ? title : `${title} — Literae`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
@@ -25,6 +26,15 @@ const fullTitle = title === "Scriptorium" ? title : `${title} — Scriptorium`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
     <meta name="theme-color" content="#002654" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {gallery && <link rel="preconnect" href="https://api.literae.ch" crossorigin />}

@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import OrnamentRule from "../../components/OrnamentRule.astro";
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title="Bibliothèque"
+  description="Bibliothèque de Literae — ouvrages élus et traductions d’ancien régime. En voie d’édification ; contenu réservé."
+>
+  <main class="page-wrap py-10">
+    <a href="/scriptorium" class="text-sm text-muted hover:text-fg">← Scriptorium</a>
+    <h1 class="mt-4 font-display text-4xl sm:text-5xl">Bibliothèque</h1>
+    <OrnamentRule class="my-5 max-w-sm" />
+    <p class="max-w-2xl text-lg leading-relaxed">
+      L’intention est d’y recueillir des livres de bon aloi : traductions anciennes,
+      textes libres de droits, quelques volumes retravaillés pour la lecture présente.
+    </p>
+    <p class="mt-6 text-muted">En voie d’édification ; contenu réservé.</p>
+  </main>
+</BaseLayout>

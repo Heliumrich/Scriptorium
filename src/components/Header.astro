@@ -8,28 +8,82 @@ const ART = "https://art.literae.ch";
 
 const NAV = [
   { href: `${MAIN}/`, label: "Accueil", match: (p: string) => p === "/" },
-  { href: `${MAIN}/comparateur`, label: "Comparateur", match: (p: string) => p.startsWith("/comparateur") },
   { href: `${ART}/`, label: "Art", match: (p: string) => p === "/art" || p.startsWith("/art/") || p.startsWith("/oeuvres") || p.startsWith("/personalites") },
   { href: `${MAIN}/prieres`, label: "Prières", match: (p: string) => p.startsWith("/prieres") },
   { href: `${MAIN}/calendrier`, label: "Calendrier", match: (p: string) => p.startsWith("/calendrier") },
   { href: `${MAIN}/a-propos`, label: "À propos", match: (p: string) => p.startsWith("/a-propos") },
 ];
 
+const SCRIPTORIUM_HREF = `${MAIN}/scriptorium`;
+const SCRIPTORIUM_PAGES = [
+  { href: `${MAIN}/scriptorium/comparateur`, label: "Comparateur" },
+  { href: `${MAIN}/scriptorium/bibliotheque`, label: "Bibliothèque" },
+];
+
 function isActive(item: (typeof NAV)[number]) {
   return item.match(pathname);
 }
+
+const scriptoriumOn =
+  pathname.startsWith("/scriptorium") || pathname.startsWith("/comparateur");
 ---
 
 <header class="site-header sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-md">
   <div class="page-wrap flex h-16 items-center justify-between gap-3">
     <a href="https://literae.ch/" class="flex items-center gap-2.5 text-fg no-underline">
-      <Fleur class="size-8 text-gold" title="Scriptorium" />
-      <span class="font-display text-xl tracking-tight">Scriptorium</span>
+      <Fleur class="size-8 text-gold" title="Literae" />
+      <span class="font-display text-xl tracking-tight">Literae</span>
     </a>
 
     <nav class="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
+      <a
+        href={NAV[0].href}
+        class:list={[
+          "rounded-md px-3 py-2 text-sm transition-colors hover:bg-bg-secondary hover:text-fg",
+          isActive(NAV[0]) ? "bg-bg-secondary text-fg" : "text-muted",
+        ]}
+        aria-current={isActive(NAV[0]) ? "page" : undefined}
+      >
+        Accueil
+      </a>
+      <div class="nav-drop relative flex items-center" id="scriptorium-drop">
+        <a
+          href={SCRIPTORIUM_HREF}
+          class:list={[
+            "rounded-md py-2 pl-3 pr-1 text-sm transition-colors hover:bg-bg-secondary hover:text-fg",
+            scriptoriumOn ? "bg-bg-secondary text-fg" : "text-muted",
+          ]}
+        >
+          Scriptorium
+        </a>
+        <button
+          type="button"
+          id="scriptorium-drop-btn"
+          class:list={[
+            "rounded-md px-1.5 py-2 text-sm transition-colors hover:bg-bg-secondary hover:text-fg",
+            scriptoriumOn ? "text-fg" : "text-muted",
+          ]}
+          aria-label="Sous-pages du Scriptorium"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div
+          id="scriptorium-dropdown"
+          class="absolute left-0 top-full z-50 mt-1 hidden w-52 rounded-lg border border-border bg-card py-1 shadow-lg"
+        >
+          {
+            SCRIPTORIUM_PAGES.map((item) => (
+              <a href={item.href} class="block px-3 py-1.5 text-sm text-muted hover:bg-bg-secondary hover:text-fg">
+                {item.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
       {
-        NAV.map((item) => (
+        NAV.slice(1).map((item) => (
           <a
             href={item.href}
             class:list={[
@@ -92,8 +146,27 @@ function isActive(item: (typeof NAV)[number]) {
     aria-label="Navigation mobile"
   >
     <div class="page-wrap flex flex-col gap-1 py-3">
+      <a
+        href={NAV[0].href}
+        class:list={["rounded-md px-3 py-2.5 text-sm", isActive(NAV[0]) ? "bg-bg-secondary text-fg" : "text-muted"]}
+      >
+        Accueil
+      </a>
+      <a
+        href={SCRIPTORIUM_HREF}
+        class:list={["rounded-md px-3 py-2.5 text-sm", scriptoriumOn ? "bg-bg-secondary text-fg" : "text-muted"]}
+      >
+        Scriptorium
+      </a>
       {
-        NAV.map((item) => (
+        SCRIPTORIUM_PAGES.map((item) => (
+          <a href={item.href} class="rounded-md px-6 py-2 text-sm text-muted">
+            {item.label}
+          </a>
+        ))
+      }
+      {
+        NAV.slice(1).map((item) => (
           <a
             href={item.href}
             class:list={[
@@ -156,6 +229,15 @@ function isActive(item: (typeof NAV)[number]) {
     applyQuality(v);
   });
 
+  const dropBtn = document.getElementById("scriptorium-drop-btn");
+  const dropMenu = document.getElementById("scriptorium-dropdown");
+  dropBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = !dropMenu?.classList.contains("hidden");
+    dropMenu?.classList.toggle("hidden", open);
+    dropBtn.setAttribute("aria-expanded", String(!open));
+  });
+
   const themeBtn = document.getElementById("theme-toggle-btn");
   const themeDropdown = document.getElementById("theme-dropdown");
   themeBtn?.addEventListener("click", (e) => {
@@ -175,6 +257,8 @@ function isActive(item: (typeof NAV)[number]) {
   document.addEventListener("click", () => {
     themeDropdown?.classList.add("hidden");
     themeBtn?.setAttribute("aria-expanded", "false");
+    dropMenu?.classList.add("hidden");
+    dropBtn?.setAttribute("aria-expanded", "false");
   });
 
   const mobileBtn = document.getElementById("mobile-nav-btn");

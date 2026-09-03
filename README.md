@@ -1,4 +1,4 @@
-# Scriptorium
+# Literae
 
 Atelier catholique francophone. Comparer des traductions de la Bible trop peu présentes ailleurs, feuilleter une galerie d’art sacré, prier, suivre l’année liturgique.
 
@@ -24,7 +24,7 @@ Atelier catholique francophone. Comparer des traductions de la Bible trop peu pr
 
 ## UI / layout
 
-- Header sticky : logo lys + Scriptorium, nav, **Qualité max**, sélecteur de thème, menu mobile
+- Header sticky : logo lys + Literae, nav (Scriptorium en menu), **Qualité max**, sélecteur de thème, menu mobile
 - Footer : lys, phrase d’atelier, liens
 - Rythme de page : label uppercase tracking large → titre `font-display` → `OrnamentRule` → texte serif
 - Cartes `.panel`, grilles max-width `6xl` (comparateur `1600px`)
@@ -55,7 +55,9 @@ Assets : `/assets/{id}?key=thumbnail|medium|large|xlarge`. **Qualité max** sert
 | Chemin | Page |
 |---|---|
 | `/` | Accueil |
-| `/comparateur` | Comparateur |
+| `/scriptorium` | Hub Scriptorium |
+| `/scriptorium/comparateur` | Comparateur |
+| `/scriptorium/bibliotheque` | Bibliothèque (placeholder) |
 | `/art` | Hub galerie + derniers ajouts |
 | `/art/personalites` | Liste artistes (`?tags=` `&mode=or` `&view=list`) |
 | `/art/personalites/[slug]` | Fiche artiste |

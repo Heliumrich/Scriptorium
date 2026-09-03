@@ -19,9 +19,9 @@ const verse = verseFallback;
 
 const FEATURES = [
   {
-    href: "/comparateur",
-    title: "Comparateur",
-    body: "De grandes traductions historiques sûres et de haute qualité",
+    href: "/scriptorium",
+    title: "Scriptorium",
+    body: "Pupitre de la lettre sainte : comparer les versions, et consulter, en son temps, une bibliothèque d’ouvrages élus.",
     icon: "book",
   },
   {
@@ -45,7 +45,10 @@ const FEATURES = [
 ];
 ---
 
-<BaseLayout title="Scriptorium">
+<BaseLayout
+  title="Literae"
+  description="Un lieu pour lire La Sainte Écriture dans plusieurs traductions françaises rares, contempler l’art chrétien, prier avec les mots de l’Église, et marcher au rythme de l’année liturgique."
+>
   <main>
     <section class="relative overflow-hidden">
       <Fleur
@@ -59,7 +62,7 @@ const FEATURES = [
           Atelier catholique
         </p>
         <h1 class="max-w-3xl font-display text-5xl leading-[0.95] sm:text-7xl">
-          Scriptorium
+          Literae
         </h1>
         <p class="mt-4 font-display text-2xl italic text-muted">
           Tolle, lege — prends et lis.
@@ -82,7 +85,7 @@ const FEATURES = [
         <p class="mt-4 font-serif text-xl leading-relaxed">{verse.text}</p>
         <p class="mt-4 text-sm text-muted">{verse.name_short}</p>
         <a
-          href="/comparateur"
+          href="/scriptorium/comparateur"
           class="mt-6 inline-flex h-9 items-center rounded-md border border-border px-4 text-sm hover:bg-bg-secondary transition-colors"
         >
           Comparer ce passage
@@ -105,7 +108,7 @@ const FEATURES = [
           href="/calendrier"
           class="mt-6 inline-flex h-9 items-center px-0 text-sm text-muted hover:text-fg transition-colors"
         >
-          Voir le calendrier
+          En voie d’édification ; contenu réservé
         </a>
       </article>
     </section>

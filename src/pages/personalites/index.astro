@@ -17,11 +17,10 @@ const allTags = [...new Set(artists.flatMap((a) => parseTags(a.tags)))].sort((a,
 const firstPage = artists.slice(0, PAGE_SIZE);
 ---
 
-<BaseLayout gallery title="Personnalités illustres" description="Personnalités illustres du catalogue Scriptorium">
+<BaseLayout gallery title="Personnalités illustres" description="Personnalités illustres du catalogue Literae">
   <main class="page-wrap py-10">
     <a href="https://art.literae.ch/" class="text-sm text-muted hover:text-fg">← Art</a>
-    <p class="mt-4 text-xs uppercase tracking-[0.22em] text-muted">Notices</p>
-    <h1 class="mt-2 font-display text-4xl sm:text-5xl">Personnalités illustres</h1>
+    <h1 class="mt-4 font-display text-4xl sm:text-5xl">Personnalités illustres</h1>
     <OrnamentRule class="my-5 max-w-sm" />
 
     <div id="type-filters" class="mt-6 flex flex-wrap gap-2">
