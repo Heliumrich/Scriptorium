@@ -10,12 +10,12 @@ interface Props {
 }
 
 const {
-  title = "Incarnatio",
-  description = "Incarnatio — un lieu pour lire la Sainte Écriture, contempler l’art chrétien, prier avec les mots de l’Église, et marcher au rythme de l’année liturgique.",
+  title = "Literae",
+  description = "Literae — un lieu pour lire la Sainte Écriture, contempler l’art chrétien, prier avec les mots de l’Église, et marcher au rythme de l’année liturgique.",
   gallery = false,
 } = Astro.props;
 
-const fullTitle = title === "Incarnatio" ? title : `${title} — Incarnatio`;
+const fullTitle = title === "Literae" ? title : `${title} — Literae`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
@@ -37,7 +37,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
     <meta name="twitter:description" content={description} />
     <meta name="theme-color" content="#002654" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {gallery && <link rel="preconnect" href="https://api.incarnatio.ch" crossorigin />}
+    {gallery && <link rel="preconnect" href="https://api.literae.ch" crossorigin />}
     <script is:inline>
       try {
         var t = localStorage.getItem("scriptorium-theme");

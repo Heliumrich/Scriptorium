@@ -1,5 +1,5 @@
 export const DIRECTUS_URL =
-  import.meta.env.DIRECTUS_URL || "https://api.incarnatio.ch";
+  import.meta.env.DIRECTUS_URL || "https://api.literae.ch";
 
 const DIRECTUS_TOKEN = import.meta.env.DIRECTUS_TOKEN as string | undefined;
 
