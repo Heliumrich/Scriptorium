@@ -406,11 +406,10 @@
   display: none;
 }
 .lightbox-img {
-  max-width: 96vw;
-  max-height: calc(100dvh - 5.2rem);
-  width: auto;
-  height: auto;
+  width: 96vw;
+  height: calc(100dvh - 5.2rem);
   object-fit: contain;
+  object-position: center;
 }
 .lightbox-cap {
   position: absolute;
