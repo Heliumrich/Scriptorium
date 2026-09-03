@@ -407,30 +407,39 @@
 }
 .lightbox-img {
   width: 96vw;
-  height: calc(100dvh - 5.2rem);
+  height: calc(100dvh - 5.5rem);
   object-fit: contain;
   object-position: center;
 }
 .lightbox-cap {
   position: absolute;
+  right: 0;
   bottom: 1rem;
-  left: 50%;
+  left: 0;
   display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  transform: translateX(-50%);
+  justify-content: center;
   color: #f8f1e3;
   font-size: 0.9rem;
+  pointer-events: none;
+}
+.lightbox-cap-center {
+  position: relative;
 }
 .lightbox-dl {
+  position: absolute;
+  top: 50%;
+  left: 100%;
   display: grid;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-left: 0.55rem;
   place-items: center;
-  width: 1.85rem;
-  height: 1.85rem;
   border: 1px solid color-mix(in oklab, #f8f1e3 45%, transparent);
-  border-radius: 6px;
+  border-radius: 5px;
   color: inherit;
   opacity: 0.85;
+  transform: translateY(-50%);
+  pointer-events: auto;
 }
 .lightbox-dl:hover {
   opacity: 1;

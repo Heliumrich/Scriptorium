@@ -56,6 +56,7 @@ function ensureLightbox() {
     <img class="lightbox-img" alt="" />
     <button type="button" class="lightbox-next" aria-label="Œuvre suivante">›</button>
     <p class="lightbox-cap">
+      <span class="lightbox-cap-center">
       <a class="lightbox-cap-link" href="#"></a>
       <a class="lightbox-dl" hidden aria-label="Télécharger">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -64,6 +65,7 @@ function ensureLightbox() {
           <path d="M5 20h14"></path>
         </svg>
       </a>
+      </span>
     </p>
   `;
   document.body.appendChild(root);
