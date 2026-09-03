@@ -132,6 +132,13 @@
   --hero-wash: color-mix(in oklab, #cbb07a 40%, transparent);
 }
 
+/* Feuille A4 paysage (√2) calée sur la hauteur d’écran ; 16:9 a de petites marges, ultrawide davantage. */
+.page-wrap {
+  width: min(92vw, calc(100vh * 1.414213562));
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
@@ -392,15 +399,17 @@
   z-index: 80;
   display: grid;
   place-items: center;
-  background: rgba(10, 8, 6, 0.88);
-  padding: 1.5rem;
+  background: rgba(10, 8, 6, 0.92);
+  padding: 2.75rem 2.5rem 3.1rem;
 }
 .lightbox[hidden] {
   display: none;
 }
 .lightbox-img {
-  max-width: min(96vw, 1600px);
-  max-height: 88vh;
+  max-width: 96vw;
+  max-height: calc(100dvh - 5.2rem);
+  width: auto;
+  height: auto;
   object-fit: contain;
 }
 .lightbox-cap {

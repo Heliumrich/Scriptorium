@@ -21,7 +21,7 @@ function isActive(item: (typeof NAV)[number]) {
 ---
 
 <header class="site-header sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-md">
-  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+  <div class="page-wrap flex h-16 items-center justify-between gap-3">
     <a href="https://literae.ch/" class="flex items-center gap-2.5 text-fg no-underline">
       <Fleur class="size-8 text-gold" title="Scriptorium" />
       <span class="font-display text-xl tracking-tight">Scriptorium</span>
@@ -91,7 +91,7 @@ function isActive(item: (typeof NAV)[number]) {
     class="hidden border-t border-border bg-card lg:hidden"
     aria-label="Navigation mobile"
   >
-    <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3">
+    <div class="page-wrap flex flex-col gap-1 py-3">
       {
         NAV.map((item) => (
           <a
