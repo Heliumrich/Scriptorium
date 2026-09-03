@@ -1,5 +1,9 @@
 import { pickAssetSrc } from "./asset-tier";
 
+function downloadUrl(src: string) {
+  return src.includes("?") ? `${src}&download` : `${src}?download`;
+}
+
 export type LightboxItem = {
   alt: string;
   href?: string | null;
@@ -53,7 +57,7 @@ function ensureLightbox() {
     <button type="button" class="lightbox-next" aria-label="Œuvre suivante">›</button>
     <p class="lightbox-cap">
       <a class="lightbox-cap-link" href="#"></a>
-      <a class="lightbox-dl" hidden download aria-label="Télécharger">
+      <a class="lightbox-dl" hidden aria-label="Télécharger">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M12 4v12"></path>
           <path d="M7 11l5 5 5-5"></path>
@@ -65,10 +69,19 @@ function ensureLightbox() {
   document.body.appendChild(root);
   root.addEventListener("click", (e) => {
     const t = e.target as HTMLElement;
-    if (t.closest(".lightbox-cap-link") || t.closest(".lightbox-dl")) return;
-    if (t === root || t.classList.contains("lightbox-close")) closeLightbox();
-    if (t.classList.contains("lightbox-prev")) step(-1);
-    if (t.classList.contains("lightbox-next")) step(1);
+    if (t.closest(".lightbox-cap-link")) return;
+    if (t.closest(".lightbox-dl")) return;
+    if (t.classList.contains("lightbox-prev")) {
+      step(-1);
+      return;
+    }
+    if (t.classList.contains("lightbox-next")) {
+      step(1);
+      return;
+    }
+    const img = root.querySelector<HTMLImageElement>(".lightbox-img");
+    if (img && (t === img || img.contains(t)) && clickOnPaintedImage(img, e)) return;
+    closeLightbox();
   });
   return root;
 }
@@ -101,7 +114,7 @@ function show() {
   const dl = root.querySelector<HTMLAnchorElement>(".lightbox-dl");
   if (dl) {
     if (item.original) {
-      dl.href = item.original;
+      dl.href = downloadUrl(item.original);
       dl.hidden = false;
     } else {
       dl.removeAttribute("href");
@@ -130,6 +143,19 @@ export function openLightbox(el: HTMLElement) {
     index = 0;
   }
   show();
+}
+
+function clickOnPaintedImage(img: HTMLImageElement, e: MouseEvent) {
+  const nw = img.naturalWidth;
+  const nh = img.naturalHeight;
+  if (!nw || !nh) return true;
+  const rect = img.getBoundingClientRect();
+  const scale = Math.min(rect.width / nw, rect.height / nh);
+  const dw = nw * scale;
+  const dh = nh * scale;
+  const x = rect.left + (rect.width - dw) / 2;
+  const y = rect.top + (rect.height - dh) / 2;
+  return e.clientX >= x && e.clientX <= x + dw && e.clientY >= y && e.clientY <= y + dh;
 }
 
 function step(delta: number) {

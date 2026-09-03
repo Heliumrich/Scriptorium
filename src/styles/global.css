@@ -425,8 +425,12 @@
 .lightbox-dl {
   display: grid;
   place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 1px solid color-mix(in oklab, #f8f1e3 45%, transparent);
+  border-radius: 6px;
   color: inherit;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 .lightbox-dl:hover {
   opacity: 1;
