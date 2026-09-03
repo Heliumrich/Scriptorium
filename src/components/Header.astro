@@ -3,8 +3,8 @@ import Fleur from "./Fleur.astro";
 
 const pathname = Astro.url.pathname;
 
-const MAIN = "https://literae.ch";
-const ART = "https://art.literae.ch";
+const MAIN = "https://incarnatio.ch";
+const ART = "https://art.incarnatio.ch";
 
 const NAV = [
   { href: `${MAIN}/`, label: "Accueil", match: (p: string) => p === "/" },
@@ -30,9 +30,9 @@ const scriptoriumOn =
 
 <header class="site-header sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-md">
   <div class="page-wrap flex h-16 items-center justify-between gap-3">
-    <a href="https://literae.ch/" class="flex items-center gap-2.5 text-fg no-underline">
-      <Fleur class="size-8 text-gold" title="Literae" />
-      <span class="font-display text-xl tracking-tight">Literae</span>
+    <a href="https://incarnatio.ch/" class="flex items-center gap-2.5 text-fg no-underline">
+      <Fleur class="size-8 text-gold" title="Incarnatio" />
+      <span class="font-display text-xl tracking-tight">Incarnatio</span>
     </a>
 
     <nav class="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
@@ -196,8 +196,8 @@ const scriptoriumOn =
     const cookie =
       THEME_KEY + "=" + encodeURIComponent(theme) + "; path=/; max-age=31536000; SameSite=Lax";
     document.cookie = cookie;
-    if (location.hostname.endsWith("literae.ch")) {
-      document.cookie = cookie + "; domain=.literae.ch";
+    if (location.hostname.endsWith("incarnatio.ch")) {
+      document.cookie = cookie + "; domain=.incarnatio.ch";
     }
   }
 

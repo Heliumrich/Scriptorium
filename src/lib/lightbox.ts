@@ -11,6 +11,8 @@ export type LightboxItem = {
   large?: string | null;
   xlarge?: string | null;
   original?: string | null;
+  /** Pas de titre ni téléchargement (slug œuvre). */
+  minimal?: boolean;
 };
 
 let gallery: LightboxItem[] = [];
@@ -36,6 +38,7 @@ function fromEl(el: HTMLElement): LightboxItem {
     large: el.dataset.large,
     xlarge: el.dataset.xlarge,
     original: el.dataset.original,
+    minimal: el.hasAttribute("data-lightbox-minimal"),
   };
 }
 
@@ -100,8 +103,10 @@ function show() {
     img.src = itemSrc(item);
     img.alt = item.alt;
   }
+  const minimal = Boolean(item.minimal);
+  if (cap) cap.hidden = minimal;
   const link = root.querySelector<HTMLAnchorElement>(".lightbox-cap-link");
-  if (link) {
+  if (link && !minimal) {
     link.textContent = item.alt;
     if (item.href) {
       link.href = item.href;
@@ -110,12 +115,10 @@ function show() {
       link.removeAttribute("href");
       link.classList.remove("is-link");
     }
-  } else if (cap) {
-    cap.textContent = item.alt;
   }
   const dl = root.querySelector<HTMLAnchorElement>(".lightbox-dl");
   if (dl) {
-    if (item.original) {
+    if (!minimal && item.original) {
       dl.href = downloadUrl(item.original);
       dl.hidden = false;
     } else {
@@ -123,7 +126,7 @@ function show() {
       dl.hidden = true;
     }
   }
-  const many = gallery.length > 1;
+  const many = !minimal && gallery.length > 1;
   prev?.classList.toggle("hidden", !many);
   next?.classList.toggle("hidden", !many);
   root.hidden = false;
@@ -132,6 +135,13 @@ function show() {
 
 export function openLightbox(el: HTMLElement) {
   const current = fromEl(el);
+  // Slug œuvre : image seule, pas de légende ni navigation.
+  if (current.minimal) {
+    gallery = [current];
+    index = 0;
+    show();
+    return;
+  }
   if (gallery.length > 1) {
     const found = gallery.findIndex(
       (item) =>
