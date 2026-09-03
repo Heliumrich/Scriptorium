@@ -117,9 +117,26 @@ function isActive(item: (typeof NAV)[number]) {
   const THEME_KEY = "scriptorium-theme";
   const QUALITY_KEY = "quality-max";
 
+  const THEME_FONTS: Record<string, string> = {
+    royalty: "https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap",
+    augustin:
+      "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap",
+  };
+
+  function loadThemeFont(theme: string) {
+    const href = THEME_FONTS[theme];
+    if (!href || document.querySelector(`link[data-theme-font="${theme}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.dataset.themeFont = theme;
+    document.head.appendChild(link);
+  }
+
   function applyTheme(theme: string) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
+    loadThemeFont(theme);
     const cookie =
       THEME_KEY + "=" + encodeURIComponent(theme) + "; path=/; max-age=31536000; SameSite=Lax";
     document.cookie = cookie;
